@@ -51,7 +51,7 @@ class RegisteredUserController extends Controller
         //return padrão do breeze:
         //return redirect(route('dashboard', absolute: false));
 
-        //Atualização para redirecionar para diferentes páginas:
+        //git config --global --unset credential.helperAtualização para redirecionar para diferentes páginas:
         $user = $request->user();
 
         if ($user->role === 'manager') {
