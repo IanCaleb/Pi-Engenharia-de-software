@@ -17,15 +17,18 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-//rotas provisórias sem middleware
-
-Route::get('/manager/dashboard', function () {
-    return view('manager.dashboard');
+// Rota protegida para Gerente
+Route::middleware(['auth', 'manager'])->group(function () {
+    Route::get('/manager/dashboard', function () {
+        return view('manager.dashboard');
+    })->name('manager.dashboard');
 });
 
-Route::get('/user/dashboard', function () {
-    return view('user.dashboard');
+// Rota protegida para Donatário
+Route::middleware(['auth', 'user'])->group(function () {
+    Route::get('/user/dashboard', function () {
+        return view('user.dashboard');
+    })->name('user.dashboard');
 });
-
 
 require __DIR__.'/auth.php';
