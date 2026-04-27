@@ -41,6 +41,10 @@ Route::get('/manager/produtos', function () {
 });
 //user
 
+Route::get('/user/dashboard', function () {
+    return view('user.home');
+});
+
 Route::get('/user/home', function () {
     return view('user.home');
 });
