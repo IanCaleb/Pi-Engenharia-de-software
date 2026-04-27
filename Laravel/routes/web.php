@@ -54,6 +54,22 @@ Route::get('/user/buscar-lojas', function () {
 });
 
 
+/*
 
+// Rota protegida para Gerente
+Route::middleware(['auth', 'manager'])->group(function () {
+    Route::get('/manager/dashboard', function () {
+        return view('manager.dashboard');
+    })->name('manager.dashboard');
+});
 
+// Rota protegida para Donatário
+
+Route::middleware(['auth', 'user'])->group(function () {
+    Route::get('/user/dashboard', function () {
+        return view('user.dashboard');
+    })->name('user.dashboard');
+});
+*/
 require __DIR__.'/auth.php';
+
