@@ -6,7 +6,11 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('landingPage.landingPage');
+});
+
+Route::get('/landingPage', function () {
+    return view('landingPage.landingPage');
 });
 
 Route::get('/dashboard', function () {
