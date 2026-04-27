@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-sidebar-nav-manager active="dashboard">
+    <x-sidebar-nav-user active="home">
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -8,14 +8,10 @@
                             <h1 class="text-3xl font-bold mb-4">
                                 Dashboard:
                             </h1>
-
-                            <p class="text-lg text-gray-600">
-                                Visão geral do controle de validade e doações
-                            </p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </x-sidebar-nav-manager>
+    </x-sidebar-nav-user>
 </x-app-layout>
