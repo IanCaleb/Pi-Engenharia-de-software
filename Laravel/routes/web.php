@@ -27,5 +27,10 @@ Route::get('/user/dashboard', function () {
     return view('user.dashboard');
 });
 
+Route::get('/produtos', function () {
+    // Isso aponta para resources/views/products/index.blade.php
+    return view('products.index'); 
+})->name('products.index');
+
 
 require __DIR__.'/auth.php';
