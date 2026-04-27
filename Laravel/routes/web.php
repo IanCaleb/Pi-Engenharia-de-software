@@ -27,13 +27,33 @@ Route::middleware('auth')->group(function () {
 
 //rotas provisórias sem middleware
 
+//manager
+
 Route::get('/manager/dashboard', function () {
     return view('manager.dashboard');
 });
 
-Route::get('/user/dashboard', function () {
-    return view('user.dashboard');
+Route::get('/manager/doacoes', function () {
+    return view('manager.doacoes');
 });
+Route::get('/manager/produtos', function () {
+    return view('manager.produtos');
+});
+//user
+
+Route::get('/user/home', function () {
+    return view('user.home');
+});
+
+Route::get('/user/doacoes', function () {
+    return view('user.doacoes');
+});
+
+Route::get('/user/buscar-lojas', function () {
+    return view('user.buscar-lojas');
+});
+
+
 
 
 require __DIR__.'/auth.php';

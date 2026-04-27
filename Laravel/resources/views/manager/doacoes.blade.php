@@ -1,16 +1,16 @@
 <x-app-layout>
-    <x-sidebar-nav-manager active="dashboard">
+    <x-sidebar-nav-manager active="doacoes">
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900">
                         <div>
                             <h1 class="text-3xl font-bold mb-4">
-                                Dashboard:
+                                Doações:
                             </h1>
 
                             <p class="text-lg text-gray-600">
-                                Visão geral do controle de validade e doações
+                                Gerencie as solicitações de doações e produtos disponíveis!
                             </p>
                         </div>
                     </div>
