@@ -216,7 +216,7 @@
 
                         <!-- Botão doação -->
                         @if($status !== 'ok')
-                            <button class="w-full h-[54px] mt-1 bg-[#08273B] hover:bg-[#0f3d5e] text-white text-[13px] font-bold rounded-[15px] transition-colors duration-150">
+                            <button class="w-full h-[36px] mt-1 bg-[#08273B] hover:bg-[#0f3d5e] text-white text-[13px] font-bold rounded-[15px] transition-colors duration-150">
                                 Disponibilizar para Doação
                             </button>
                         @endif
@@ -257,14 +257,14 @@
             <div class="flex flex-col gap-1.5">
                 <label class="text-[13px] font-semibold text-[#08273B]">Nome do Produto</label>
                 <input type="text" placeholder="Ex: Leite Integral 1L"
-                       class="w-full h-[54px] px-4 border border-gray-200 rounded-[15px] bg-gray-50 text-[14px] text-gray-700 placeholder:text-gray-300 outline-none focus:border-[#749048] focus:bg-white transition-colors" />
+                       class="w-full h-[36px] px-4 border border-gray-200 rounded-[15px] bg-gray-50 text-[14px] text-gray-700 placeholder:text-gray-300 outline-none focus:border-[#749048] focus:bg-white transition-colors" />
             </div>
 
             {{-- Categoria --}}
             <div class="flex flex-col gap-1.5">
                 <label class="text-[13px] font-semibold text-[#08273B]">Categoria</label>
                 <input type="text" placeholder="Ex: Laticínios"
-                       class="w-full h-[54px] px-4 border border-gray-200 rounded-[15px] bg-gray-50 text-[14px] text-gray-700 placeholder:text-gray-300 outline-none focus:border-[#749048] focus:bg-white transition-colors" />
+                       class="w-full h-[36px] px-4 border border-gray-200 rounded-[15px] bg-gray-50 text-[14px] text-gray-700 placeholder:text-gray-300 outline-none focus:border-[#749048] focus:bg-white transition-colors" />
             </div>
 
             {{-- Quantidade + Validade --}}
@@ -272,12 +272,12 @@
                 <div class="flex flex-col gap-1.5">
                     <label class="text-[13px] font-semibold text-[#08273B]">Quantidade</label>
                     <input type="number" placeholder="0"
-                           class="w-full h-[54px] px-4 border border-gray-200 rounded-[15px] bg-gray-50 text-[14px] text-gray-700 placeholder:text-gray-300 outline-none focus:border-[#749048] focus:bg-white transition-colors" />
+                           class="w-full h-[36px] px-4 border border-gray-200 rounded-[15px] bg-gray-50 text-[14px] text-gray-700 placeholder:text-gray-300 outline-none focus:border-[#749048] focus:bg-white transition-colors" />
                 </div>
                 <div class="flex flex-col gap-1.5">
                     <label class="text-[13px] font-semibold text-[#08273B]">Data de Validade</label>
                     <input type="text" placeholder="dd/mm/aaaa"
-                           class="w-full h-[54px] px-4 border border-gray-200 rounded-[15px] bg-gray-50 text-[14px] text-gray-700 placeholder:text-gray-300 outline-none focus:border-[#749048] focus:bg-white transition-colors" />
+                           class="w-full h-[36px] px-4 border border-gray-200 rounded-[15px] bg-gray-50 text-[14px] text-gray-700 placeholder:text-gray-300 outline-none focus:border-[#749048] focus:bg-white transition-colors" />
                 </div>
             </div>
         </div>
@@ -285,11 +285,11 @@
         {{-- Ações --}}
         <div class="flex gap-3 mt-6">
             <button onclick="closeModal()"
-                    class="flex-1 h-[54px] bg-white border border-gray-200 hover:bg-gray-50 text-[14px] font-bold text-gray-600 rounded-[15px] transition-colors">
+                    class="flex-1 h-[36px] bg-white border border-gray-200 hover:bg-gray-50 text-[14px] font-bold text-gray-600 rounded-[15px] transition-colors">
                 Cancelar
             </button>
             <button onclick="closeModal()"
-                    class="flex-1 h-[54px] bg-[#08273B] hover:bg-[#0f3d5e] text-white text-[14px] font-bold rounded-[15px] transition-colors">
+                    class="flex-1 h-[36px] bg-[#08273B] hover:bg-[#0f3d5e] text-white text-[14px] font-bold rounded-[15px] transition-colors">
                 Adicionar
             </button>
         </div>
@@ -387,7 +387,7 @@ function renderCards(list) {
             </div>
 
             ${showDonate ? `
-            <button class="w-full h-[54px] mt-1 bg-[#08273B] hover:bg-[#0f3d5e] text-white text-[13px] font-bold rounded-[15px] transition-colors duration-150">
+            <button class="w-full h-[36px] mt-1 bg-[#08273B] hover:bg-[#0f3d5e] text-white text-[13px] font-bold rounded-[15px] transition-colors duration-150">
                 Disponibilizar para Doação
             </button>` : ''}
         </div>`;
