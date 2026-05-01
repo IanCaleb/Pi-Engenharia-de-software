@@ -58,7 +58,6 @@ Route::get('/user/buscar-lojas', function () {
 });
 
 Route::get('/produtos', function () {
-    // Isso aponta para resources/views/products/index.blade.php
     return view('products.index'); 
 })->name('products.index');
 
