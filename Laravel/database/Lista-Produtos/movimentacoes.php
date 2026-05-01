@@ -1,0 +1,1 @@
+{ "id": 1, "name": "Arroz Integral 1kg", "category": "Mercearia", "lote": "ABC-101", "data_validade": "2027-01-15", "data_movimentacao": "2026-03-20", "tipo_movimentacao": "Entrada", "preco_venda": 7.50, "preco_compra": 4.80 },
