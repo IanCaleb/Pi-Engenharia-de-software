@@ -55,7 +55,7 @@ Route::get('/user/buscar-lojas', function () {
 })->name('user.buscar-lojas');
 
 Route::get('/produtos', function () {
-    return view('products.index');
+    return view('products.index'); 
 })->name('products.index');
 
 /*
