@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -45,5 +46,25 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    public function products(): HasMany
+    {
+        return $this->hasMany(Product::class);
+    }
+
+    /**
+     * Doações criadas pelo mercado.
+     */
+    public function donations(): HasMany
+    {
+        return $this->hasMany(Donation::class, 'store_id');
+    }
+
+    /**
+     * Solicitações de doação feitas pelo donatário.
+     */
+    public function donationRequests(): HasMany
+    {
+        return $this->hasMany(DonationRequest::class, 'donatario_id');
     }
 }
