@@ -36,10 +36,18 @@
             </button>
         </div>
 
-        {{-- Logo / Título --}}
-        <div class="px-6 py-5 border-b border-white/20">
-            <h2 class="text-2xl font-bold">ValidControl</h2>
-            <p class="text-sm text-lime-100">Painel Gerencial</p>
+        {{-- Usuário --}}
+        <div class="px-6 py-5 border-b border-white/20 flex items-center gap-3">
+            {{-- Avatar com inicial do nome --}}
+            <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white font-bold text-lg uppercase shrink-0">
+                {{ mb_substr(auth()->user()?->name ?? 'U', 0, 1) }}
+            </div>
+            <div class="overflow-hidden">
+                <p class="font-semibold text-white truncate leading-tight">
+                    {{ auth()->user()?->name ?? 'Usuário' }}
+                </p>
+                <p class="text-xs text-lime-100 leading-tight">Painel do Donatário</p>
+            </div>
         </div>
 
         {{-- Navegação --}}
