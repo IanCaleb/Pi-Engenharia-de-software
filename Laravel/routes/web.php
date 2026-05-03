@@ -27,5 +27,12 @@ Route::get('/user/dashboard', function () {
     return view('user.dashboard');
 });
 
+Route::get('/user/doacoes', function () {
+    return view('user.doacao');
+})->name('user.doacoes');
+
+Route::get('/user/doacoes/cadastrar', function () {
+    return view('user.doacao-create');
+})->name('user.doacoes.create');
 
 require __DIR__.'/auth.php';
