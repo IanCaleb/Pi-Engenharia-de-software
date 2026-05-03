@@ -38,10 +38,37 @@ class ProductController extends Controller
         return view('manager.dashboard', compact('products', 'expired', 'warning', 'safe'));
     }
 
+    public function store(Request $request)
+    {
+        // 1. Valida os dados que vieram do modal em inglês
+        $request->validate([
+            'name'            => 'required|string|max:255',
+            'category'        => 'required|string|max:255',
+            'quantity'        => 'required|integer|min:0',
+            'expiration_date' => 'required|date',
+        ]);
+
+        // 2. Cria o produto vinculando obrigatoriamente ao gerente logado
+        \App\Models\Product::create([
+            'user_id'         => \Illuminate\Support\Facades\Auth::id(), // Pega o ID de quem está usando o sistema
+            'name'            => $request->name,
+            'category'        => $request->category,
+            'quantity'        => $request->quantity,
+            'expiration_date' => $request->expiration_date,
+            'status'          => 'safe', // Todo produto novo nasce com status safe
+        ]);
+
+        // 3. Redirecionamento de volta para a tela
+        return redirect()->back()->with('success', 'Produto adicionado com sucesso!');
+    }
+
+    public function destroy(Product $product) {
+        $product->delete();
+        return redirect()->back()->with('success', 'Produto removido com sucesso!');    
+    }
+
     public function create() {}
-    public function store(Request $request) {}
     public function show(Product $product) {}
     public function edit(Product $product) {}
     public function update(Request $request, Product $product) {}
-    public function destroy(Product $product) {}
 }

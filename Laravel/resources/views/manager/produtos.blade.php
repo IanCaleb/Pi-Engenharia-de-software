@@ -1,18 +1,5 @@
 <x-app-layout>
     <x-sidebar-nav-manager active="produtos">
-        @php
-        $produtos = [
-        ['nome' => 'Pão Integral', 'categoria' => 'Padaria', 'quantidade' => 20, 'validade' => '14/04/2026', 'adicionado' => '14/03/2026', 'dias' => 18, 'status' => 'ok'],
-        ['nome' => 'Iogurte Natural', 'categoria' => 'Laticínios', 'quantidade' => 30, 'validade' => '20/03/2026', 'adicionado' => '09/03/2026', 'dias' => -6, 'status' => 'vencido'],
-        ['nome' => 'Leite Integral 1L','categoria' => 'Laticínios', 'quantidade' => 45, 'validade' => '24/03/2026', 'adicionado' => '28/02/2026', 'dias' => -2, 'status' => 'critico'],
-        ['nome' => 'Pão Integral', 'categoria' => 'Padaria', 'quantidade' => 20, 'validade' => '14/04/2026', 'adicionado' => '14/03/2026', 'dias' => 18, 'status' => 'ok'],
-        ['nome' => 'Iogurte Natural', 'categoria' => 'Laticínios', 'quantidade' => 30, 'validade' => '20/03/2026', 'adicionado' => '09/03/2026', 'dias' => -6, 'status' => 'vencido'],
-        ['nome' => 'Leite Integral 1L','categoria' => 'Laticínios', 'quantidade' => 45, 'validade' => '24/03/2026', 'adicionado' => '28/02/2026', 'dias' => -2, 'status' => 'critico'],
-        ['nome' => 'Pão Integral', 'categoria' => 'Padaria', 'quantidade' => 20, 'validade' => '14/04/2026', 'adicionado' => '14/03/2026', 'dias' => 18, 'status' => 'ok'],
-        ['nome' => 'Iogurte Natural', 'categoria' => 'Laticínios', 'quantidade' => 30, 'validade' => '20/03/2026', 'adicionado' => '09/03/2026', 'dias' => -6, 'status' => 'vencido'],
-        ['nome' => 'Leite Integral 1L','categoria' => 'Laticínios', 'quantidade' => 45, 'validade' => '24/03/2026', 'adicionado' => '28/02/2026', 'dias' => -2, 'status' => 'critico'],
-        ];
-        @endphp
 
         {{-- ═══════════════════════════════════════════
              WRAPPER PRINCIPAL — ocupa toda a área após
@@ -39,105 +26,169 @@
                 </button>
             </header>
 
-            {{-- ── Barra de busca ── --}}
-            <div class="mb-8">
-                <label for="busca-produto" class="sr-only">Buscar produtos</label>
-                <div class="flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-2.5 shadow-sm">
-                    <svg class="h-4 w-4 shrink-0 text-gray-400" viewBox="0 0 24 24" fill="none">
-                        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" />
-                        <path d="M21 21l-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                    </svg>
-                    <input
-                        id="busca-produto"
-                        type="search"
-                        placeholder="Buscar produtos..."
-                        class="flex-1 border-none bg-transparent text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-0">
+            {{-- ── Barra de busca e Filtros ── --}}
+            <form method="GET" action="{{ route('manager.produtos') }}" class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center">
+                
+                {{-- Input de Texto (Busca) --}}
+                <div class="flex-1">
+                    <label for="busca-produto" class="sr-only">Buscar produtos</label>
+                    <div class="flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-2.5 shadow-sm focus-within:border-[#749048] focus-within:ring-1 focus-within:ring-[#749048]">
+                        <svg class="h-4 w-4 shrink-0 text-gray-400" viewBox="0 0 24 24" fill="none">
+                            <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" />
+                            <path d="M21 21l-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                        <input
+                            id="busca-produto"
+                            name="search"
+                            type="search"
+                            value="{{ request('search') }}"
+                            placeholder="Buscar por nome ou categoria..."
+                            class="flex-1 border-none bg-transparent text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-0">
+                    </div>
                 </div>
-            </div>
+
+                {{-- Dropdown de Status (Filtro) --}}
+                <div class="sm:w-48 shrink-0">
+                    <label for="filtro-status" class="sr-only">Filtrar por status</label>
+                    <select 
+                        id="filtro-status" 
+                        name="status"
+                        class="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 shadow-sm focus:border-[#749048] focus:outline-none focus:ring-1 focus:ring-[#749048]">
+                        <option value="">Todos os status</option>
+                        <option value="expired" @selected(request('status') === 'expired')>Vencidos</option>
+                        <option value="warning" @selected(request('status') === 'warning')>Perto do Vencimento</option>
+                        <option value="safe" @selected(request('status') === 'safe')>Em dia</option>
+                    </select>
+                </div>
+
+                {{-- Botões de Ação --}}
+                <div class="flex items-center gap-2 shrink-0">
+                    <button 
+                        type="submit" 
+                        class="rounded-xl bg-[#749048] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#5f7a39]">
+                        Filtrar
+                    </button>
+                    
+                    {{-- Botão de limpar filtros (só aparece se houver alguma busca ativa) --}}
+                    @if(request()->hasAny(['search', 'status']) && (request('search') != '' || request('status') != ''))
+                        <a href="{{ route('manager.produtos') }}" 
+                        class="rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-600 shadow-sm transition hover:bg-gray-50">
+                            Limpar
+                        </a>
+                    @endif
+                </div>
+            </form>
 
             {{-- ── Grade de produtos ── --}}
             <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3" role="list">
 
-                @foreach ($produtos as $produto)
+                @forelse ($products as $product)
 
-                @php
-                // Badge de vencimento
-                if ($produto['status'] === 'vencido') {
-                $badgeBg = 'bg-red-500';
-                $badgeText = 'text-white';
-                $showBtn = true;
-                } elseif ($produto['status'] === 'critico') {
-                $badgeBg = 'bg-yellow-400';
-                $badgeText = 'text-gray-900';
-                $showBtn = true;
-                } else {
-                $badgeBg = 'bg-gray-100';
-                $badgeText = 'text-gray-700';
-                $showBtn = false;
-                }
-
-                $labelDias = $produto['dias'] >= 0
-                ? 'Vence em ' . $produto['dias'] . ' dias'
-                : 'Vencido há ' . abs($produto['dias']) . ' dias';
-                @endphp
+                    @php
+                        // Conectando o visual do Front com a lógica do Back
+                        $status = $product->expirationStatus();
+                        $labelDias = $product->expirationMessage();
+        
+                        if ($status === 'expired') {
+                            $badgeBg = 'bg-red-500';
+                            $badgeText = 'text-white';
+                            $showBtn = true;
+                        } elseif ($status === 'warning') {
+                            $badgeBg = 'bg-yellow-400';
+                            $badgeText = 'text-gray-900';
+                            $showBtn = true;
+                        } else {
+                            $badgeBg = 'bg-green-500';
+                            $badgeText = 'text-gray-700';
+                            $showBtn = false;
+                        }
+                    @endphp
 
                 <li class="flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
 
-                    {{-- Topo do card --}}
-                    <div class="mb-4 flex items-start justify-between">
-                        <div class="flex items-center gap-2">
-                            {{-- Ícone produto --}}
-                            <svg class="h-5 w-5 shrink-0 text-gray-700" viewBox="0 0 24 24" fill="none">
-                                <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
-                            <h2 class="font-bold text-gray-900">{{ $produto['nome'] }}</h2>
-                        </div>
-
-                        @if ($produto['status'] !== 'ok')
-                        {{-- Ícone de alerta para produtos próximos do vencimento --}}
-                        <svg class="h-5 w-5 shrink-0 text-orange-400" viewBox="0 0 24 24" fill="none" aria-label="Atenção: produto próximo ao vencimento">
-                            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" />
-                            <path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                {{-- Topo do card (Com Alerta e Botão de Deletar) --}}
+                <div class="mb-4 flex items-start justify-between">
+                    <div class="flex items-center gap-2">
+                        {{-- Ícone produto (Atualizado para uma caixa) --}}
+                        <svg class="h-5 w-5 shrink-0 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
                         </svg>
-                        @endif
+                        <h2 class="font-bold text-gray-900">{{ $product->name }}</h2>
                     </div>
 
-                    {{-- Categoria --}}
-                    <p class="mb-4 text-sm text-gray-500">{{ $produto['categoria'] }}</p>
+                    {{-- Grupo de ícones da direita (Alerta + Lixeira) --}}
+                    <div class="flex items-center gap-2">
+                        @if ($status !== 'safe')
+                            {{-- Ícone de alerta --}}
+                            <svg class="h-5 w-5 shrink-0 {{ $status === 'expired' ? 'text-red-500' : 'text-orange-400' }}" viewBox="0 0 24 24" fill="none" aria-label="Atenção">
+                                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" />
+                                <path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                            </svg>
+                        @endif
 
-                    {{-- Dados do produto --}}
-                    <dl class="mb-4 space-y-1 text-sm">
-                        <div class="flex justify-between">
-                            <dt class="text-gray-500">Quantidade:</dt>
-                            <dd class="font-semibold text-gray-800">{{ $produto['quantidade'] }} unidades</dd>
-                        </div>
-                        <div class="flex justify-between">
-                            <dt class="text-gray-500">Validade:</dt>
-                            <dd class="font-semibold text-gray-800">{{ $produto['validade'] }}</dd>
-                        </div>
-                        <div class="flex justify-between">
-                            <dt class="text-gray-500">Adicionado em:</dt>
-                            <dd class="font-semibold text-gray-800">{{ $produto['adicionado'] }}</dd>
-                        </div>
-                    </dl>
+                        {{-- Mini-formulário de Delete --}}
+                        <form 
+                            action="{{ route('products.destroy', $product->id) }}" 
+                            method="POST" 
+                            class="m-0 p-0"
+                            onsubmit="return confirm('Tem certeza que deseja excluir o produto {{ $product->name }}? Esta ação não pode ser desfeita.');">
+                            
+                            @csrf
+                            @method('DELETE')
+                            
+                            <button type="submit" class="text-gray-400 transition hover:text-red-600" title="Excluir Produto">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                </div>
 
-                    {{-- Badge de dias --}}
-                    <span class="mb-4 inline-flex w-fit items-center rounded-full px-3 py-1 text-xs font-semibold {{ $badgeBg }} {{ $badgeText }}">
-                        {{ $labelDias }}
-                    </span>
+                {{-- Categoria --}}
+                <p class="mb-4 text-sm text-gray-500">{{ $product->category }}</p>
 
-                    {{-- Botão doação (apenas para críticos/vencidos) --}}
-                    @if ($showBtn)
+                {{-- Dados do produto --}}
+                <dl class="mb-4 space-y-1 text-sm">
+                    <div class="flex justify-between">
+                        <dt class="text-gray-500">Quantidade:</dt>
+                        <dd class="font-semibold text-gray-800">{{ $product->quantity }} unidades</dd>
+                    </div>
+                    <div class="flex justify-between">
+                        <dt class="text-gray-500">Validade:</dt>
+                        <dd class="font-semibold text-gray-800">{{ $product->expiration_date->format('d/m/Y') }}</dd>
+                    </div>
+                    <div class="flex justify-between">
+                        <dt class="text-gray-500">Adicionado em:</dt>
+                        <dd class="font-semibold text-gray-800">{{ $product->created_at->format('d/m/Y') }}</dd>
+                    </div>
+                </dl>
+
+                {{-- Badge de dias --}}
+                <span class="mb-4 inline-flex w-fit items-center rounded-full px-3 py-1 text-xs font-semibold {{ $badgeBg }} {{ $badgeText }}">
+                    {{ $labelDias }}
+                </span>
+
+                {{-- Botão doação (apenas para críticos/vencidos) --}}
+                @if ($showBtn)
                     <button
                         type="button"
                         class="mt-auto w-full rounded-lg bg-[#08273B] py-2.5 text-sm font-semibold text-white transition hover:bg-[#0a3350]">
                         Disponibilizar para Doação
                     </button>
-                    @endif
+                @endif
 
-                </li>
+            </li>
 
-                @endforeach
+
+                @empty
+                    <div class="col-span-full py-12 text-center text-gray-500">
+                        Nenhum produto cadastrado no momento.
+                    </div>
+                @endforelse
+
 
             </ul>
 
@@ -189,7 +240,7 @@
                         </p>
                     </header>
 
-                    {{-- Formulário --}}
+                    {{-- Formulário com atributos name atualizados para Inglês --}}
                     <form method="POST" action="{{ route('manager.produtos.store') }}" class="space-y-4">
                         @csrf
 
@@ -201,7 +252,7 @@
                             <input
                                 id="nome_produto"
                                 type="text"
-                                name="nome"
+                                name="name" 
                                 placeholder="Ex: Leite Integral 1L"
                                 required
                                 class="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:border-[#749048] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#749048]">
@@ -215,7 +266,7 @@
                             <input
                                 id="categoria"
                                 type="text"
-                                name="categoria"
+                                name="category" 
                                 placeholder="Ex: Laticínios"
                                 required
                                 class="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:border-[#749048] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#749048]">
@@ -230,7 +281,7 @@
                                 <input
                                     id="quantidade"
                                     type="number"
-                                    name="quantidade"
+                                    name="quantity" 
                                     min="0"
                                     placeholder="0"
                                     required
@@ -244,7 +295,7 @@
                                 <input
                                     id="data_validade"
                                     type="date"
-                                    name="data_validade"
+                                    name="expiration_date" 
                                     required
                                     class="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:border-[#749048] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#749048]">
                             </div>
