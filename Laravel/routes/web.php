@@ -31,7 +31,8 @@ Route::middleware('auth')->group(function () {
 // Rotas do manager
 // TODO: adicionar middleware ['auth', 'manager'] quando o frontend estiver pronto
 Route::get('/manager/dashboard', [ProductController::class, 'dashboard'])->name('manager.dashboard');
-Route::get('/manager/produtos', [ProductController::class, 'index'])->name('manager.produtos');
+Route::get('manager/produtos', [ProductController::class, 'index'])->name('manager.produtos');
+Route::post('/manager/produtos', [ProductController::class, 'store'])->name('manager.produtos.store');
 Route::get('/manager/doacoes', function () {
     return view('manager.doacoes');
 })->name('manager.doacoes');
@@ -54,9 +55,7 @@ Route::get('/user/buscar-lojas', function () {
     return view('user.buscar-lojas');
 })->name('user.buscar-lojas');
 
-Route::get('/produtos', function () {
-    return view('products.index'); 
-})->name('products.index');
+
 
 /*
  * Middlewares de proteção por role — desativados temporariamente a pedido do P.O
@@ -74,4 +73,4 @@ Route::get('/produtos', function () {
  * });
  */
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
