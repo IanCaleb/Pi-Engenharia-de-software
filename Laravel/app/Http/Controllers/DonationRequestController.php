@@ -24,9 +24,7 @@ class DonationRequestController extends Controller
 
         // Protege: só pode solicitar doações disponíveis
         if ($donation->status !== 'disponivel') {
-            return response()->json([
-                'message' => 'Esta doação não está mais disponível.',
-            ], 400);
+            return redirect()->back()->with('error', 'Esta doação não está mais disponível.');
         }
 
         // Regra: donatário não pode solicitar a mesma doação duas vezes
@@ -35,9 +33,7 @@ class DonationRequestController extends Controller
             ->exists();
 
         if ($jaExiste) {
-            return response()->json([
-                'message' => 'Você já solicitou esta doação.',
-            ], 400);
+           return redirect()->back()->with('error', 'Você já solicitou esta doação.');
         }
 
         // Cria a solicitação
@@ -47,9 +43,6 @@ class DonationRequestController extends Controller
             'status'       => 'pendente',
         ]);
 
-        return response()->json([
-            'message'          => 'Solicitação enviada com sucesso!',
-            'donation_request' => $donationRequest,
-        ], 201);
+        return redirect()->back()->with('success', 'Solicitação enviada com sucesso!');
     }
 }
