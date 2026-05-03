@@ -41,10 +41,7 @@ class DonationController extends Controller
             'status'   => 'disponivel',
         ]);
 
-        return response()->json([
-            'message'  => 'Doação disponibilizada com sucesso!',
-            'donation' => $donation,
-        ], 201);
+        return redirect()->back()->with('success', 'Doação disponibilizada com sucesso!');
     }
 
     /**
@@ -63,24 +60,24 @@ class DonationController extends Controller
 
         // Protege: apenas o dono da doação pode aprovar/recusar
         if ($donation->store_id !== Auth::id()) {
-            return response()->json(['message' => 'Ação não autorizada.'], 403);
+            return redirect()->back()->with('error', 'Ação não autorizada.');
         }
 
         // Protege: só pode agir em requests pendentes
         if ($donationRequest->status !== 'pendente') {
-            return response()->json(['message' => 'Este pedido já foi processado.'], 400);
+            return redirect()->back()->with('error', 'Este pedido já foi processado.');
         }
 
         // Protege: só pode agir em doações disponíveis
         if ($donation->status !== 'disponivel') {
-            return response()->json(['message' => 'Esta doação não está mais disponível.'], 400);
+            return redirect()->back()->with('error', 'Esta doação não está mais disponível.');
         }
 
         if ($request->status === 'recusado') {
             // Apenas recusa este request
             $donationRequest->update(['status' => 'recusado']);
 
-            return response()->json(['message' => 'Solicitação recusada.']);
+           return redirect()->back()->with('success', 'Solicitação recusada.');
         }
 
         // Se aceito:
@@ -96,9 +93,8 @@ class DonationController extends Controller
             ->where('status', 'pendente')
             ->update(['status' => 'recusado']);
 
-        return response()->json(['message' => 'Solicitação aceita! Outros pedidos foram recusados automaticamente.']);
+        return redirect()->back()->with('success', 'Solicitação aceita! Outros pedidos foram recusados automaticamente.');
     }
-
     /**
      * Marcar doação como concluída/retirada (apenas manager)
      * PATCH /donations/requests/{donationRequest}/concluir
@@ -110,17 +106,17 @@ class DonationController extends Controller
 
         // Protege: apenas o dono da doação pode concluir
         if ($donation->store_id !== Auth::id()) {
-            return response()->json(['message' => 'Ação não autorizada.'], 403);
+            return redirect()->back()->with('error', 'Ação não autorizada.');
         }
 
         // Protege: só pode concluir se o request estiver aceito
         if ($donationRequest->status !== 'aceito') {
-            return response()->json(['message' => 'Este pedido não está aceito.'], 400);
+            return redirect()->back()->with('error', 'Este pedido não está aceito.');
         }
 
         // Protege: só pode concluir se a doação estiver em_processo
         if ($donation->status !== 'em_processo') {
-            return response()->json(['message' => 'Esta doação não está em processo.'], 400);
+            return redirect()->back()->with('error', 'Esta doação não está em processo.');
         }
 
         // 1. Conclui o request
@@ -133,6 +129,6 @@ class DonationController extends Controller
         $batch = $donation->batch;
         $batch->decrement('quantity', $donation->quantity);
 
-        return response()->json(['message' => 'Doação concluída! Estoque atualizado.']);
+        return redirect()->back()->with('success', 'Doação concluída! Estoque atualizado.');
     }
 }
