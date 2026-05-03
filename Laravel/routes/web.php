@@ -2,9 +2,10 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BatchController;
-
+use App\Http\Controllers\DonationController;
+use App\Http\Controllers\DonationRequestController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('landingPage.landingPage');
@@ -18,18 +19,30 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-
+// ROTAS PROTEGIDAS POR LOGIN WEB
 Route::middleware('auth')->group(function () {
+    
+    // Perfil do usuário
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // CRUD de Produtos e Lotes
     Route::resource('products', ProductController::class);
     Route::resource('batches', BatchController::class);
+
+    // ── ROTAS DE DOAÇÃO (Manager) ──
+    Route::post('/donations', [DonationController::class, 'store'])->name('donations.store');
+    Route::patch('/donations/requests/{donationRequest}/status', [DonationController::class, 'updateStatus'])->name('donations.updateStatus');
+    Route::patch('/donations/requests/{donationRequest}/concluir', [DonationController::class, 'concluir'])->name('donations.concluir');
+
+    // ── ROTAS DE SOLICITAÇÃO DE DOAÇÃO (Donatário) ──
+    Route::post('/donation-requests', [DonationRequestController::class, 'store'])->name('donation-requests.store');
 });
 
+// VIEWS DO MANAGER E USER
+
 // Rotas do manager
-// TODO: adicionar middleware ['auth', 'manager'] quando o frontend estiver pronto
 Route::get('/manager/dashboard', [ProductController::class, 'dashboard'])->name('manager.dashboard');
 Route::get('/manager/produtos', [ProductController::class, 'index'])->name('manager.produtos');
 Route::get('/manager/doacoes', function () {
@@ -37,7 +50,6 @@ Route::get('/manager/doacoes', function () {
 })->name('manager.doacoes');
 
 // Rotas do user
-// TODO: adicionar middleware ['auth', 'user'] quando o frontend estiver pronto
 Route::get('/user/dashboard', function () {
     return view('user.home');
 })->name('user.dashboard');
@@ -55,7 +67,7 @@ Route::get('/user/buscar-lojas', function () {
 })->name('user.buscar-lojas');
 
 Route::get('/produtos', function () {
-    return view('products.index'); 
+    return view('products.index');
 })->name('products.index');
 
 /*
