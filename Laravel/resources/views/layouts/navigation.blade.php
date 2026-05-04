@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="fixed top-0 left-0 right-0 z-50 bg-[#08273B] border-b border-[#0a3350]">
+<nav x-data="{ open: false }" class="fixed top-0 left-0 right-0 z-[9999] bg-[#46572b] border-b border-[#2f391f]">
     <!-- Primary Navigation Menu -->
     <div class="mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -62,21 +62,16 @@
     </div>
 
     <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden bg-[#08273B]">
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
-        </div>
+    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden bg-[#46572b]">
 
         <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-[#0a3350]">
+        <div class="pt-4 pb-1 border-t border-[#2f391f]">
             <div class="px-4">
                 <div class="font-medium text-base text-white">{{ Auth::user()?->name }}</div>
                 <div class="font-medium text-sm text-gray-300">{{ Auth::user()?->email }}</div>
             </div>
 
-            <div class="mt-3 space-y-1">
+            <div class="mt-3 space-y-1 p-4">
                 <x-responsive-nav-link :href="route('profile.edit')">
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
