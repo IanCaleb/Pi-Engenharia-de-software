@@ -285,5 +285,5 @@ function toggleDesktopSidebar() {
 </script>
 
 </body>
-<!-- Identificação da interface: Doações ValidControl -->
+<!-- final do arquivo -->
 </html>
