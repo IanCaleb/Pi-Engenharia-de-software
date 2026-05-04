@@ -5,7 +5,7 @@
 
 <div 
     x-data="{ open: false }"
-    class="flex min-h-screen bg-gray-100"
+    class="flex min-h-screen bg-gray-100 "
 >
     {{-- BOTÃO MOBILE --}}
     <button
@@ -24,14 +24,14 @@
     ></div>
 
     {{-- SIDEBAR --}}
-    <aside
-        class="
-            fixed md:static top-0 left-0 z-50
-            h-[100vh] w-64
-            bg-[#749048] text-white shadow-lg
-            transform transition-transform duration-300
-            md:translate-x-0
-        "
+    <aside class="
+    fixed md:sticky
+    top-0 md:top-16
+    left-0 z-50
+    h-screen md:h-[calc(100vh-4rem)]
+    w-64
+    bg-[#749048] text-white shadow-lg
+"
         :class="open ? 'translate-x-0' : '-translate-x-full md:translate-x-0'"
     >
         {{-- TOPO MOBILE --}}
@@ -83,7 +83,7 @@
     </aside>
 
     {{-- CONTEÚDO --}}
-    <main class="flex-1 w-full md:ml-0">
+    <main class="flex-1">
         {{ $slot }}
     </main>
 </div>
