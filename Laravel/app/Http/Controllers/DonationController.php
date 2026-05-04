@@ -28,10 +28,8 @@ class DonationController extends Controller
 
         // Regra: quantidade a doar não pode ultrapassar a quantidade do lote
         if ($request->quantity > $batch->quantity) {
-            return response()->json([
-                'message' => 'A quantidade a ser doada não pode ultrapassar a quantidade do lote.',
-            ], 400);
-        }
+            return redirect()->back()->with('error', 'A quantidade a ser doada não pode ultrapassar a quantidade do lote.');
+    }
 
         // Cria a doação com status 'disponivel'
         $donation = Donation::create([
@@ -41,7 +39,28 @@ class DonationController extends Controller
             'status'   => 'disponivel',
         ]);
 
+        // Subtrai a quantidade do lote original
+        $batch->quantity -= $request->quantity;
+
+        // Se o gerente doou TUDO o que tinha no lote, o status muda
+        if ($batch->quantity == 0) {
+            $batch->status = 'doado'; 
+        }
+
+        // Salva a alteração matemática no banco de dados
+        $batch->save();
+
         return redirect()->back()->with('success', 'Doação disponibilizada com sucesso!');
+    }
+
+    public function index()
+{
+    // Pega todas as doações da loja logada e traz os dados do lote/produto junto
+        $donations = \App\Models\Donation::with('batch.product')
+            ->where('store_id', \Illuminate\Support\Facades\Auth::id())
+            ->get();
+
+        return view('manager.doacoes', compact('donations'));
     }
 
     /**

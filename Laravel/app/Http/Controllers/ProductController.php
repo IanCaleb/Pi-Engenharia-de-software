@@ -19,32 +19,38 @@ public function index(Request $request)
 
     $today = \Carbon\Carbon::today();
 
-    $products = Product::where('user_id', Auth::id())
-        ->when($search, function ($query, $search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'LIKE', "%{$search}%")
-                  ->orWhere('category', 'LIKE', "%{$search}%");
-            });
-        })
-        ->when($status, function ($query, $status) use ($today) {
-            if ($status === 'expired') {
-                $query->where('expiration_date', '<', $today);
-            } elseif ($status === 'warning') {
-                $query->where('expiration_date', '>=', $today)
-                      ->where('expiration_date', '<=', $today->copy()->addDays(7));
-            } elseif ($status === 'safe') {
-                $query->where('expiration_date', '>', $today->copy()->addDays(7));
+    $batches = \App\Models\Batch::with('product')
+        ->whereHas('product', function ($q) use ($search) {
+            $q->where('user_id', Auth::id());
+            
+            if ($search) {
+                $q->where(function($sub) use ($search) {
+                    $sub->where('name', 'LIKE', "%{$search}%")
+                        ->orWhere('category', 'LIKE', "%{$search}%");
+                });
             }
+        })
+        ->where('quantity', '>', 0)
+        ->when($status, function ($query, $status) use ($today) {
+            if ($status === 'expired') $query->where('expiration_date', '<', $today);
+            elseif ($status === 'warning') $query->whereBetween('expiration_date', [$today, $today->copy()->addDays(7)]);
+            elseif ($status === 'safe') $query->where('expiration_date', '>', $today->copy()->addDays(7));
         })
         ->get();
 
-    // Sempre conta com base em TODOS os produtos (sem filtro) para o resumo
-    $allProducts = Product::where('user_id', Auth::id())->get();
-    $expired = $allProducts->filter(fn($p) => $p->expirationStatus() === 'expired')->count();
-    $warning = $allProducts->filter(fn($p) => $p->expirationStatus() === 'warning')->count();
-    $safe    = $allProducts->filter(fn($p) => $p->expirationStatus() === 'safe')->count();
+    //  OS CONTADORES DO TOPO DA TELA (Sem os filtros, para mostrar o total real da loja)
+    $allBatches = \App\Models\Batch::whereHas('product', function ($q) {
+        $q->where('user_id', Auth::id());
+    })
+    ->where('quantity', '>', 0) //Só pega o que tem mais de zero
+    ->get();
 
-    return view('manager.produtos', compact('products', 'expired', 'warning', 'safe', 'search', 'status'));
+    $expired = $allBatches->filter(fn($b) => $b->expirationStatus() === 'expired')->count();
+    $warning = $allBatches->filter(fn($b) => $b->expirationStatus() === 'warning')->count();
+    $safe    = $allBatches->filter(fn($b) => $b->expirationStatus() === 'safe')->count();
+
+   
+    return view('manager.produtos', compact('batches', 'expired', 'warning', 'safe', 'search', 'status'));
 }
 
     /**
@@ -52,37 +58,46 @@ public function index(Request $request)
      */
     public function dashboard()
     {
-        $products = Product::where('user_id', Auth::id())->get();
+        $batches = \App\Models\Batch::with('product')
+            ->whereHas('product', function ($q) {
+                $q->where('user_id', \Illuminate\Support\Facades\Auth::id());
+            })->get();
 
-        $expired = $products->filter(fn($p) => $p->expirationStatus() === 'expired')->count();
-        $warning = $products->filter(fn($p) => $p->expirationStatus() === 'warning')->count();
-        $safe    = $products->filter(fn($p) => $p->expirationStatus() === 'safe')->count();
+        
+        $expired = $batches->filter(fn($b) => $b->expirationStatus() === 'expired')->count();
+        $warning = $batches->filter(fn($b) => $b->expirationStatus() === 'warning')->count();
+        $safe    = $batches->filter(fn($b) => $b->expirationStatus() === 'safe')->count();
 
-        return view('manager.dashboard', compact('products', 'expired', 'warning', 'safe'));
+        
+        return view('manager.dashboard', compact('batches', 'expired', 'warning', 'safe'));
     }
 
     public function store(Request $request)
     {
-        // 1. Valida os dados que vieram do modal em inglês
         $request->validate([
             'name'            => 'required|string|max:255',
             'category'        => 'required|string|max:255',
-            'quantity'        => 'required|integer|min:0',
+            'quantity'        => 'required|integer|min:1',
             'expiration_date' => 'required|date',
         ]);
 
-        // 2. Cria o produto vinculando obrigatoriamente ao gerente logado
-        \App\Models\Product::create([
-            'user_id'         => \Illuminate\Support\Facades\Auth::id(), // Pega o ID de quem está usando o sistema
-            'name'            => $request->name,
-            'category'        => $request->category,
+        // 1. ACHA ou CRIA o produto base (Ex: "Leite Integral" dos Laticínios)
+        $product = \App\Models\Product::firstOrCreate(
+            ['user_id' => Auth::id(), 'name' => $request->name],
+            ['category' => $request->category, 'status' => 'ativo']
+        );
+
+        // 2. Cria O LOTE com a quantidade e validade específica
+        \App\Models\Batch::create([
+            'product_id'      => $product->id,
+            'batch_number'    => strtoupper(uniqid('LOTE-')), // gerador automatico de lote
             'quantity'        => $request->quantity,
             'expiration_date' => $request->expiration_date,
-            'status'          => 'safe', // Todo produto novo nasce com status safe
-        ]);
+            'entry_date'      => now(),
+            'status'          => 'disponivel', 
+    ]);
 
-        // 3. Redirecionamento de volta para a tela
-        return redirect()->back()->with('success', 'Produto adicionado com sucesso!');
+        return redirect()->back()->with('success', 'Lote do produto adicionado com sucesso!');
     }
 
     public function destroy(Product $product) {
