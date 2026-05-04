@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Batch extends Model
 {
-    // Permite que essas colunas sejam salvas em massa
+    protected $table = 'batches';
+
     protected $fillable = [
         'product_id', 
         'batch_number', 
@@ -18,11 +19,10 @@ class Batch extends Model
     ];
 
     protected $casts = [
-    'entry_date' => 'date',
-    'expiration_date' => 'date',
+        'entry_date' => 'date',
+        'expiration_date' => 'date',
     ];
 
-    // Cria o relacionamento com o Produto
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
@@ -30,6 +30,6 @@ class Batch extends Model
 
     public function donations(): HasMany
     {
-    return $this->hasMany(Donation::class);
+        return $this->hasMany(Donation::class);
     }
 }

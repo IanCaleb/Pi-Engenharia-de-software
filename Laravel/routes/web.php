@@ -6,6 +6,7 @@ use App\Http\Controllers\BatchController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\DonationRequestController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return view('landingPage.landingPage');
@@ -19,7 +20,7 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// ROTAS PROTEGIDAS POR LOGIN WEB
+// ROTAS PROTEGIDAS POR LOGIN
 Route::middleware('auth')->group(function () {
     
     // Perfil do usuário
@@ -31,26 +32,40 @@ Route::middleware('auth')->group(function () {
     Route::resource('products', ProductController::class);
     Route::resource('batches', BatchController::class);
 
-    // ── ROTAS DE DOAÇÃO (Manager) ──
+    // ── ROTAS DE DOAÇÃO (Lógica do Manager) ──
     Route::post('/donations', [DonationController::class, 'store'])->name('donations.store');
     Route::patch('/donations/requests/{donationRequest}/status', [DonationController::class, 'updateStatus'])->name('donations.updateStatus');
     Route::patch('/donations/requests/{donationRequest}/concluir', [DonationController::class, 'concluir'])->name('donations.concluir');
 
-    // ── ROTAS DE SOLICITAÇÃO DE DOAÇÃO (Donatário) ──
+    // ── ROTAS DE SOLICITAÇÃO DE DOAÇÃO (Lógica do Donatário) ──
     Route::post('/donation-requests', [DonationRequestController::class, 'store'])->name('donation-requests.store');
 });
 
-// VIEWS DO MANAGER E USER
+// --- VIEWS DO MANAGER ---
 
-// Rotas do manager
 Route::get('/manager/dashboard', [ProductController::class, 'dashboard'])->name('manager.dashboard');
 Route::get('manager/produtos', [ProductController::class, 'index'])->name('manager.produtos');
 Route::post('/manager/produtos', [ProductController::class, 'store'])->name('manager.produtos.store');
+
+// Rota de Doações do Manager - Integrada com os Models[cite: 2, 7]
 Route::get('/manager/doacoes', function () {
-    return view('manager.doacoes');
+    // Busca doações do gerente logado com as relações de lote e produto[cite: 7]
+    $donations = \App\Models\Donation::where('store_id', Auth::id())
+        ->with(['batch.product'])
+        ->get();
+
+    // Busca solicitações pendentes para as doações deste gerente[cite: 1, 2]
+    $donationRequests = \App\Models\DonationRequest::whereHas('donation', function($q) {
+            $q->where('store_id', Auth::id());
+        })
+        ->with(['donation.batch.product'])
+        ->get();
+
+    return view('manager.doacoes', compact('donations', 'donationRequests'));
 })->name('manager.doacoes');
 
-// Rotas do user
+// --- VIEWS DO USER (DONATÁRIO) ---
+
 Route::get('/user/dashboard', function () {
     return view('user.home');
 })->name('user.dashboard');
@@ -59,10 +74,6 @@ Route::get('/user/home', function () {
     return view('user.home');
 })->name('user.home');
 
-Route::get('/user/doacoes', function () {
-    return view('user.doacoes');
-})->name('user.doacoes');
-
 Route::get('/user/buscar-lojas', function () {
     return view('user.buscar-lojas');
 })->name('user.buscar-lojas');
@@ -70,22 +81,5 @@ Route::get('/user/buscar-lojas', function () {
 Route::get('/produtos', function () {
     return view('products.index');
 })->name('products.index');
-
-
-/*
- * Middlewares de proteção por role — desativados temporariamente a pedido do P.O
- * para facilitar o desenvolvimento do frontend.
- * Reativar quando o frontend estiver finalizado:
- *
- * Route::middleware(['auth', 'manager'])->group(function () {
- *     Route::get('/manager/dashboard', ...)->name('manager.dashboard');
- *     ...
- * });
- *
- * Route::middleware(['auth', 'user'])->group(function () {
- *     Route::get('/user/dashboard', ...)->name('user.dashboard');
- *     ...
- * });
- */
 
 require __DIR__ . '/auth.php';
