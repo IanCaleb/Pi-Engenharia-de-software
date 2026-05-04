@@ -82,12 +82,12 @@
             {{-- ── Grade de produtos ── --}}
             <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3" role="list">
 
-                @forelse ($products as $product)
+                @forelse ($batches as $batch)
 
                     @php
                         // Conectando o visual do Front com a lógica do Back
-                        $status = $product->expirationStatus();
-                        $labelDias = $product->expirationMessage();
+                        $status = $batch->expirationStatus();
+                        $labelDias = $batch->expirationMessage();
         
                         if ($status === 'expired') {
                             $badgeBg = 'bg-red-500';
@@ -115,7 +115,7 @@
                             <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
                             <line x1="12" y1="22.08" x2="12" y2="12"></line>
                         </svg>
-                        <h2 class="font-bold text-gray-900">{{ $product->name }}</h2>
+                        <h2 class="font-bold text-gray-900">{{ $batch->product->name }}</h2>
                     </div>
 
                     {{-- Grupo de ícones da direita (Alerta + Lixeira) --}}
@@ -130,10 +130,10 @@
 
                         {{-- Mini-formulário de Delete --}}
                         <form 
-                            action="{{ route('products.destroy', $product->id) }}" 
+                            action="{{ route('products.destroy', $batch->product->id) }}" 
                             method="POST" 
                             class="m-0 p-0"
-                            onsubmit="return confirm('Tem certeza que deseja excluir o produto {{ $product->name }}? Esta ação não pode ser desfeita.');">
+                            onsubmit="return confirm('Tem certeza que deseja excluir o produto {{ $batch->product->name }}? Esta ação não pode ser desfeita.');">
                             
                             @csrf
                             @method('DELETE')
@@ -148,21 +148,21 @@
                 </div>
 
                 {{-- Categoria --}}
-                <p class="mb-4 text-sm text-gray-500">{{ $product->category }}</p>
+                <p class="mb-4 text-sm text-gray-500">{{ $batch->product->category }}</p>
 
                 {{-- Dados do produto --}}
                 <dl class="mb-4 space-y-1 text-sm">
                     <div class="flex justify-between">
                         <dt class="text-gray-500">Quantidade:</dt>
-                        <dd class="font-semibold text-gray-800">{{ $product->quantity }} unidades</dd>
+                        <dd class="font-semibold text-gray-800">{{ $batch->quantity }} unidades</dd>
                     </div>
                     <div class="flex justify-between">
                         <dt class="text-gray-500">Validade:</dt>
-                        <dd class="font-semibold text-gray-800">{{ $product->expiration_date->format('d/m/Y') }}</dd>
+                        <dd class="font-semibold text-gray-800">{{ $batch->expiration_date->format('d/m/Y') }}</dd>
                     </div>
                     <div class="flex justify-between">
                         <dt class="text-gray-500">Adicionado em:</dt>
-                        <dd class="font-semibold text-gray-800">{{ $product->created_at->format('d/m/Y') }}</dd>
+                        <dd class="font-semibold text-gray-800">{{ $batch->product->created_at->format('d/m/Y') }}</dd>
                     </div>
                 </dl>
 
@@ -173,11 +173,32 @@
 
                 {{-- Botão doação (apenas para críticos/vencidos) --}}
                 @if ($showBtn)
-                    <button
-                        type="button"
-                        class="mt-auto w-full rounded-lg bg-[#08273B] py-2.5 text-sm font-semibold text-white transition hover:bg-[#0a3350]">
-                        Disponibilizar para Doação
-                    </button>
+                    <form action="{{ route('donations.store') }}" method="POST" class="mt-auto flex flex-col gap-3">
+                        @csrf
+                        
+                        {{-- Envia o ID para o back-end de forma oculta --}}
+                        <input type="hidden" name="batch_id" value="{{ $batch->id }}">
+
+                        {{-- Campinho para escolher a quantidade (o limite máximo é o que tem no estoque) --}}
+                        <div class="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-3 py-2">
+                            <label for="qtd-{{ $batch->product->id }}" class="text-xs font-medium text-gray-600">Qtd. a Doar:</label>
+                            <input
+                                type="number"
+                                id="qtd-{{ $batch->id }}"
+                                name="quantity"
+                                min="1"
+                                max="{{ $batch->quantity }}"
+                                value="{{ $batch->quantity }}"
+                                class="h-7 w-16 rounded border border-gray-300 p-1 text-center text-sm focus:border-[#749048] focus:ring-1 focus:ring-[#749048] focus:outline-none"
+                                required>
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="w-full rounded-lg bg-[#08273B] py-2.5 text-sm font-semibold text-white transition hover:bg-[#0a3350]">
+                            Disponibilizar para Doação
+                        </button>
+                    </form>
                 @endif
 
             </li>

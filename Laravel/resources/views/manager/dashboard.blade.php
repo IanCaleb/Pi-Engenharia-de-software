@@ -33,7 +33,7 @@
                         <h2 class="text-xl font-bold mb-4">Produtos que precisam de atenção:</h2>
 
                         @php
-                            $urgent = $products->filter(fn($p) => $p->expirationStatus() !== 'safe');
+                            $urgent = $batches->filter(fn($p) => $p->expirationStatus() !== 'safe');
                         @endphp
 
                         @if($urgent->isEmpty())
