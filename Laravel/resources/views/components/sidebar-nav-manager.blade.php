@@ -5,7 +5,15 @@
 
 <div
     x-data="{ open: false }"
-    class="flex min-h-[calc(100vh-64px)] bg-gray-100">
+    class="flex min-h-screen bg-gray-100 "
+>
+    {{-- BOTÃO MOBILE --}}
+    <button
+        @click="open = true"
+        class="md:hidden fixed bottom-4 left-4 z-40 bg-[#749048] text-white p-5 rounded-lg shadow-lg"
+    >
+        ☰
+    </button>
 
     {{-- FUNDO ESCURO MOBILE (overlay) --}}
     <div
@@ -15,19 +23,18 @@
         class="fixed inset-0 bg-black/50 z-40 md:hidden"
         style="display: none;"></div>
 
-    {{-- SIDEBAR — fixa abaixo da navbar (top-16) --}}
-    <aside
-        class="
-            fixed top-16 left-0 z-40
-            h-[calc(100vh-64px)] w-64
-            bg-[#749048] text-white shadow-lg
-            transform transition-transform duration-300
-            md:translate-x-0
-            overflow-y-auto
-        "
-        :class="open ? 'translate-x-0' : '-translate-x-full md:translate-x-0'">
-
-        {{-- Botão fechar (apenas mobile) --}}
+    {{-- SIDEBAR --}}
+    <aside class="
+    fixed md:sticky
+    top-0 md:top-16
+    left-0 z-50
+    h-screen md:h-[calc(100vh-4rem)]
+    w-64
+    bg-[#749048] text-white shadow-lg
+"
+        :class="open ? 'translate-x-0' : '-translate-x-full md:translate-x-0'"
+    >
+        {{-- TOPO MOBILE --}}
         <div class="md:hidden flex justify-end p-4">
             <button
                 @click="open = false"
@@ -79,9 +86,9 @@
 
         </nav>
     </aside>
-
-    {{-- CONTEÚDO — empurrado 256px à direita no desktop --}}
-    <main class="flex-1 w-full md:ml-64 min-h-[calc(100vh-64px)]">
+    
+    {{-- CONTEÚDO --}}
+    <main class="flex-1">
         {{ $slot }}
     </main>
 
