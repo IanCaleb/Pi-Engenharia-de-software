@@ -10,19 +10,42 @@ use Illuminate\Support\Facades\Auth;
 class ProductController extends Controller
 {
     /**
-     * Lista produtos do gerente logado com status de vencimento
-     */
-    public function index()
-    {
-        $products = Product::where('user_id', Auth::id())->get();
+ * Lista produtos do gerente logado com filtros de busca e status
+ */
+public function index(Request $request)
+{
+    $search = $request->get('search');
+    $status = $request->get('status');
 
-        // Conta produtos por nível de urgência para o dashboard
-        $expired = $products->filter(fn($p) => $p->expirationStatus() === 'expired')->count();
-        $warning = $products->filter(fn($p) => $p->expirationStatus() === 'warning')->count();
-        $safe    = $products->filter(fn($p) => $p->expirationStatus() === 'safe')->count();
+    $today = \Carbon\Carbon::today();
 
-        return view('manager.produtos', compact('products', 'expired', 'warning', 'safe'));
-    }
+    $products = Product::where('user_id', Auth::id())
+        ->when($search, function ($query, $search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('category', 'LIKE', "%{$search}%");
+            });
+        })
+        ->when($status, function ($query, $status) use ($today) {
+            if ($status === 'expired') {
+                $query->where('expiration_date', '<', $today);
+            } elseif ($status === 'warning') {
+                $query->where('expiration_date', '>=', $today)
+                      ->where('expiration_date', '<=', $today->copy()->addDays(7));
+            } elseif ($status === 'safe') {
+                $query->where('expiration_date', '>', $today->copy()->addDays(7));
+            }
+        })
+        ->get();
+
+    // Sempre conta com base em TODOS os produtos (sem filtro) para o resumo
+    $allProducts = Product::where('user_id', Auth::id())->get();
+    $expired = $allProducts->filter(fn($p) => $p->expirationStatus() === 'expired')->count();
+    $warning = $allProducts->filter(fn($p) => $p->expirationStatus() === 'warning')->count();
+    $safe    = $allProducts->filter(fn($p) => $p->expirationStatus() === 'safe')->count();
+
+    return view('manager.produtos', compact('products', 'expired', 'warning', 'safe', 'search', 'status'));
+}
 
     /**
      * Retorna dados de vencimento para o dashboard
@@ -38,10 +61,37 @@ class ProductController extends Controller
         return view('manager.dashboard', compact('products', 'expired', 'warning', 'safe'));
     }
 
+    public function store(Request $request)
+    {
+        // 1. Valida os dados que vieram do modal em inglês
+        $request->validate([
+            'name'            => 'required|string|max:255',
+            'category'        => 'required|string|max:255',
+            'quantity'        => 'required|integer|min:0',
+            'expiration_date' => 'required|date',
+        ]);
+
+        // 2. Cria o produto vinculando obrigatoriamente ao gerente logado
+        \App\Models\Product::create([
+            'user_id'         => \Illuminate\Support\Facades\Auth::id(), // Pega o ID de quem está usando o sistema
+            'name'            => $request->name,
+            'category'        => $request->category,
+            'quantity'        => $request->quantity,
+            'expiration_date' => $request->expiration_date,
+            'status'          => 'safe', // Todo produto novo nasce com status safe
+        ]);
+
+        // 3. Redirecionamento de volta para a tela
+        return redirect()->back()->with('success', 'Produto adicionado com sucesso!');
+    }
+
+    public function destroy(Product $product) {
+        $product->delete();
+        return redirect()->back()->with('success', 'Produto removido com sucesso!');    
+    }
+
     public function create() {}
-    public function store(Request $request) {}
     public function show(Product $product) {}
     public function edit(Product $product) {}
     public function update(Request $request, Product $product) {}
-    public function destroy(Product $product) {}
 }
