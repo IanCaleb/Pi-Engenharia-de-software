@@ -19,6 +19,57 @@
                     </div>
                 </div>
 
+                {{-- Barra de busca e filtros --}}
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
+                    <div class="p-6">
+                        <form method="GET" action="{{ route('manager.produtos') }}">
+                            <div class="flex flex-col sm:flex-row gap-4">
+
+                                {{-- Campo de busca --}}
+                                <div class="flex-1">
+                                    <input
+                                        type="text"
+                                        name="search"
+                                        value="{{ $search ?? '' }}"
+                                        placeholder="Buscar por nome ou categoria..."
+                                        class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-indigo-200"
+                                    />
+                                </div>
+
+                                {{-- Filtro por status --}}
+                                <div>
+                                    <select
+                                        name="status"
+                                        class="border-gray-300 rounded-md shadow-sm focus:ring focus:ring-indigo-200"
+                                    >
+                                        <option value="">Todos os status</option>
+                                        <option value="expired"  {{ ($status ?? '') === 'expired'  ? 'selected' : '' }}>Vencidos</option>
+                                        <option value="warning"  {{ ($status ?? '') === 'warning'  ? 'selected' : '' }}>Vencem em até 7 dias</option>
+                                        <option value="safe"     {{ ($status ?? '') === 'safe'     ? 'selected' : '' }}>Em dia</option>
+                                    </select>
+                                </div>
+
+                                {{-- Botão buscar --}}
+                                <div>
+                                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                                        Buscar
+                                    </button>
+                                </div>
+
+                                {{-- Botão limpar filtros --}}
+                                @if($search || $status)
+                                    <div>
+                                         <a href="{{ route('manager.produtos') }}" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300">
+                                            Limpar
+                                        </a>
+                                    </div>
+                                @endif
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
                 {{-- Listagem de produtos --}}
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900">
@@ -26,7 +77,7 @@
                         <p class="text-lg text-gray-600 mb-6">Gerencie os produtos e suas validades!</p>
 
                         @if($products->isEmpty())
-                            <p class="text-gray-500">Nenhum produto cadastrado ainda.</p>
+                            <p class="text-gray-500">Nenhum produto encontrado.</p>
                         @else
                             <table class="w-full text-left border-collapse">
                                 <thead>
