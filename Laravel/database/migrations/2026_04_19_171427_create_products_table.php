@@ -16,9 +16,7 @@ public function up(): void
         $table->foreignId('user_id')->constrained()->onDelete('cascade');
         
         $table->string('name');            
-        $table->string('category');        
-        $table->integer('quantity');      
-        $table->date('expiration_date');   
+        $table->string('category');         
         $table->string('status');          
         
         $table->timestamps(); 
