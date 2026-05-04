@@ -71,6 +71,7 @@ Route::get('/produtos', function () {
     return view('products.index');
 })->name('products.index');
 
+
 /*
  * Middlewares de proteção por role — desativados temporariamente a pedido do P.O
  * para facilitar o desenvolvimento do frontend.
