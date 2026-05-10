@@ -284,13 +284,18 @@
                             <label for="categoria" class="mb-1 block text-sm font-medium text-gray-700">
                                 Categoria
                             </label>
-                            <input
-                                id="categoria"
-                                type="text"
-                                name="category" 
-                                placeholder="Ex: Laticínios"
-                                required
-                                class="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:border-[#749048] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#749048]">
+                            <select name="category" id="categoria" class="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:border-[#749048] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#749048]">
+                                <option value="">Selecione uma categoria</option>
+                                <option value="Laticínios">Laticínios</option>
+                                <option value="limpeza">Limpeza</option>
+                                <option value="congelados">Congelados</option>
+                                <option value="entalados">Enlatados</option>
+                                <option value="cereais">Leguminosas e Cereais</option>
+                                <option value="Carnes">Carnes</option>
+                                <option value="Hortifruti">Hortifruti</option>
+                                <option value="Padaria">Padaria</option>
+                                <option value="Bebidas">Bebidas</option>
+                            </select>
                         </div>
 
                         {{-- Quantidade + Data de Validade na mesma linha --}}
@@ -318,7 +323,7 @@
                                     type="date"
                                     name="expiration_date" 
                                     required
-                                    class="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:border-[#749048] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#749048]">
+                                    class="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:border-[#749048] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#749048]"    min="{{ date('Y-m-d') }}" max="2036-12-31">
                             </div>
                         </div>
 
