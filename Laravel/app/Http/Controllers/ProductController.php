@@ -108,5 +108,35 @@ public function index(Request $request)
     public function create() {}
     public function show(Product $product) {}
     public function edit(Product $product) {}
-    public function update(Request $request, Product $product) {}
-}
+    public function update(Request $request, $id) 
+    {
+        $request->validate([
+            'name'            => 'required|string|max:255',
+            'category'        => 'required|string',
+            'quantity'        => 'required|integer|min:0',
+            'expiration_date' => 'required|date',
+        ]);
+
+        try {
+            $batch = \App\Models\Batch::findOrFail($id);
+            $product = $batch->product;
+
+            $product->update([
+                'name'     => $request->name,
+                'category' => $request->category,
+            ]);
+
+            $batch->update([
+                'quantity'        => $request->quantity,
+                'expiration_date' => $request->expiration_date,
+            ]);
+
+            return redirect()
+                ->route('manager.produtos') 
+                ->with('success', 'Produto atualizado com sucesso!');
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Erro ao salvar: ' . $e->getMessage());
+        }
+    }
+} 

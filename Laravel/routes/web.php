@@ -46,7 +46,8 @@ Route::middleware('auth')->group(function () {
 Route::get('/manager/dashboard', [ProductController::class, 'dashboard'])->name('manager.dashboard');
 Route::get('manager/produtos', [ProductController::class, 'index'])->name('manager.produtos');
 Route::post('/manager/produtos', [ProductController::class, 'store'])->name('manager.produtos.store');
-
+// Rota para processar a edição do produto/lote
+Route::put('/manager/produtos/{id}', [App\Http\Controllers\ProductController::class, 'update'])->name('manager.produtos.update');
 // Rota de Doações do Manager - Integrada com os Models[cite: 2, 7]
 Route::get('/manager/doacoes', function () {
     // Busca doações do gerente logado com as relações de lote e produto[cite: 7]
