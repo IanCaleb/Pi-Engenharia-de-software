@@ -48,21 +48,7 @@ Route::get('manager/produtos', [ProductController::class, 'index'])->name('manag
 Route::post('/manager/produtos', [ProductController::class, 'store'])->name('manager.produtos.store');
 
 // Rota de Doações do Manager - Integrada com os Models[cite: 2, 7]
-Route::get('/manager/doacoes', function () {
-    // Busca doações do gerente logado com as relações de lote e produto[cite: 7]
-    $donations = \App\Models\Donation::where('store_id', Auth::id())
-        ->with(['batch.product'])
-        ->get();
-
-    // Busca solicitações pendentes para as doações deste gerente[cite: 1, 2]
-    $donationRequests = \App\Models\DonationRequest::whereHas('donation', function($q) {
-            $q->where('store_id', Auth::id());
-        })
-        ->with(['donation.batch.product'])
-        ->get();
-
-    return view('manager.doacoes', compact('donations', 'donationRequests'));
-})->name('manager.doacoes');
+Route::get('/manager/doacoes', [DonationController::class, 'index'])->name('manager.doacoes');
 
 // --- VIEWS DO USER (DONATÁRIO) ---
 

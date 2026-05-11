@@ -55,13 +55,22 @@ class DonationController extends Controller
 
     public function index()
 {
-    // Pega todas as doações da loja logada e traz os dados do lote/produto junto
-        $donations = \App\Models\Donation::with('batch.product')
-            ->where('store_id', \Illuminate\Support\Facades\Auth::id())
-            ->get();
+    // Pega todas as doações da loja logada
+    $donations = \App\Models\Donation::with(['batch.product', 'requests'])
+        ->where('store_id', Auth::id())
+        ->get();
 
-        return view('manager.doacoes', compact('donations'));
-    }
+    // Pega todas as solicitações recebidas para as doações deste gerente
+    $donationRequests = \App\Models\DonationRequest::whereHas('donation', function ($q) {
+            $q->where('store_id', Auth::id());
+        })
+        ->with(['donation.batch.product', 'donatario'])
+        ->whereIn('status', ['pendente', 'aceito'])
+        ->orderByRaw("FIELD(status, 'pendente', 'aceito')")
+        ->get();
+
+    return view('manager.doacoes', compact('donations', 'donationRequests'));
+}
 
     /**
      * Aprovar ou recusar uma solicitação de doação (apenas manager)
