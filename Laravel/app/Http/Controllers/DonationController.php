@@ -66,7 +66,7 @@ class DonationController extends Controller
         })
         ->with(['donation.batch.product', 'donatario'])
         ->whereIn('status', ['pendente', 'aceito'])
-        ->orderByRaw("FIELD(status, 'pendente', 'aceito')")
+        ->orderByRaw("CASE WHEN status = 'pendente' THEN 1 WHEN status = 'aceito' THEN 2 ELSE 3 END")
         ->get();
 
     return view('manager.doacoes', compact('donations', 'donationRequests'));
