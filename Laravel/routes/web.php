@@ -50,6 +50,11 @@ Route::post('/manager/produtos', [ProductController::class, 'store'])->name('man
 // Rota de Doações do Manager - Integrada com os Models[cite: 2, 7]
 Route::get('/manager/doacoes', [DonationController::class, 'index'])->name('manager.doacoes');
 
+// Notificações
+Route::get('/manager/notificacoes', function () {
+    return redirect()->route('manager.dashboard');
+})->name('notifications.index');
+
 // --- VIEWS DO USER (DONATÁRIO) ---
 
 Route::get('/user/dashboard', function () {
