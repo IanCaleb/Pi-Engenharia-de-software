@@ -68,4 +68,8 @@ Route::get('/produtos', function () {
     return view('products.index');
 })->name('products.index');
 
+Route::get('/manager/movimentacoes', function () {
+    return view('manager.movimentacoes');
+})->name('manager.movimentacoes');
+
 require __DIR__ . '/auth.php';
