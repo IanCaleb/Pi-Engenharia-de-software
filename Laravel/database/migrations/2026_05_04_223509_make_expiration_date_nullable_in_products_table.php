@@ -9,14 +9,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->date('expiration_date')->nullable()->change();
+            if (Schema::hasColumn('products', 'expiration_date')) {
+                $table->date('expiration_date')->nullable()->change();
+            }
         });
     }
 
     public function down(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->date('expiration_date')->nullable(false)->change();
+            if (Schema::hasColumn('products', 'expiration_date')) {
+                $table->date('expiration_date')->nullable(false)->change();
+            }
         });
     }
 };

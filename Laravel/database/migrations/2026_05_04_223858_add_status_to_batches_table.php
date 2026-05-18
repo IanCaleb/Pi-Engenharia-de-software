@@ -9,14 +9,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('batches', function (Blueprint $table) {
-            $table->string('status')->default('disponivel')->after('entry_date');
+            if (!Schema::hasColumn('batches', 'status')) {
+                $table->string('status')->default('disponivel')->after('entry_date');
+            }
         });
     }
 
     public function down(): void
     {
         Schema::table('batches', function (Blueprint $table) {
-            $table->dropColumn('status');
+            if (Schema::hasColumn('batches', 'status')) {
+                $table->dropColumn('status');
+            }
         });
     }
 };

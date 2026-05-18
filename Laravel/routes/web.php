@@ -5,6 +5,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\BatchController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\DonationRequestController;
+use App\Http\Controllers\MovimentacaoController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -39,6 +40,13 @@ Route::middleware('auth')->group(function () {
 
     // ── ROTAS DE SOLICITAÇÃO DE DOAÇÃO (Lógica do Donatário) ──
     Route::post('/donation-requests', [DonationRequestController::class, 'store'])->name('donation-requests.store');
+
+    // ── ROTAS DE MOVIMENTAÇÕES ──
+    Route::get('/movimentacoes', [MovimentacaoController::class, 'index'])->name('movimentacoes.index');
+    Route::post('/movimentacoes', [MovimentacaoController::class, 'store'])->name('movimentacoes.store');
+    Route::get('/movimentacoes/{id}', [MovimentacaoController::class, 'show'])->name('movimentacoes.show');
+    Route::patch('/movimentacoes/{id}', [MovimentacaoController::class, 'update'])->name('movimentacoes.update');
+    Route::delete('/movimentacoes/{id}', [MovimentacaoController::class, 'destroy'])->name('movimentacoes.destroy');
 });
 
 // --- VIEWS DO MANAGER ---
@@ -47,7 +55,7 @@ Route::get('/manager/dashboard', [ProductController::class, 'dashboard'])->name(
 Route::get('manager/produtos', [ProductController::class, 'index'])->name('manager.produtos');
 Route::post('/manager/produtos', [ProductController::class, 'store'])->name('manager.produtos.store');
 
-// Rota de Doações do Manager - Integrada com os Models[cite: 2, 7]
+// Rota de Doações do Manager
 Route::get('/manager/doacoes', [DonationController::class, 'index'])->name('manager.doacoes');
 
 // --- VIEWS DO USER (DONATÁRIO) ---
