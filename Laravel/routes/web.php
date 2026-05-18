@@ -5,6 +5,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\BatchController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\DonationRequestController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -51,9 +52,7 @@ Route::post('/manager/produtos', [ProductController::class, 'store'])->name('man
 Route::get('/manager/doacoes', [DonationController::class, 'index'])->name('manager.doacoes');
 
 // Notificações
-Route::get('/manager/notificacoes', function () {
-    return redirect()->route('manager.dashboard');
-})->name('notifications.index');
+Route::get('/manager/notificacoes', [NotificationController::class, 'index'])->name('notifications.index');
 
 // --- VIEWS DO USER (DONATÁRIO) ---
 

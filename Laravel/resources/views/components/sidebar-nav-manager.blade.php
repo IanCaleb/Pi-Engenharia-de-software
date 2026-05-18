@@ -84,6 +84,14 @@
                 📦 <span>Produtos</span>
             </a>
 
+            <a href="{{ route('notifications.index') }}"
+                class="flex items-center gap-3 px-4 py-3 rounded-lg transition
+               {{ $active === 'notifications'
+                    ? 'bg-[#8B9C5C] font-medium'
+                    : 'hover:bg-[#8B9C5C]' }}">
+                🔔 <span>Notificações</span>
+            </a>
+
         </nav>
     </aside>
     
