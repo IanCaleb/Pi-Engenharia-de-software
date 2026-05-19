@@ -25,4 +25,4 @@ register_user () {
 export -f register_user
 export URL
 
-seq 1 500 | xargs -I{} -P 100 bash -c 'register_user "$@"' _ {}
+seq 1 200 | xargs -I{} -P 100 bash -c 'register_user "$@"' _ {}

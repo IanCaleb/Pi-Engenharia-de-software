@@ -36,7 +36,20 @@ Route::middleware('auth')->group(function () {
     Route::post('/donations', [DonationController::class, 'store'])->name('donations.store');
     Route::patch('/donations/requests/{donationRequest}/status', [DonationController::class, 'updateStatus'])->name('donations.updateStatus');
     Route::patch('/donations/requests/{donationRequest}/concluir', [DonationController::class, 'concluir'])->name('donations.concluir');
+// ── ROTAS DE DOAÇÃO (Lógica do Manager) ──
+Route::post('/donations', [DonationController::class, 'store'])
+    ->name('donations.store');
 
+Route::delete('/donations/{donation}', [DonationController::class, 'destroy'])
+    ->name('donations.destroy');
+
+Route::patch('/donations/requests/{donationRequest}/status',
+    [DonationController::class, 'updateStatus'])
+    ->name('donations.updateStatus');
+
+Route::patch('/donations/requests/{donationRequest}/concluir',
+    [DonationController::class, 'concluir'])
+    ->name('donations.concluir');
     // ── ROTAS DE SOLICITAÇÃO DE DOAÇÃO (Lógica do Donatário) ──
     Route::post('/donation-requests', [DonationRequestController::class, 'store'])->name('donation-requests.store');
 });
