@@ -51,7 +51,10 @@ Route::post('/manager/produtos', [ProductController::class, 'store'])->name('man
 // Rota de Doações do Manager - Integrada com os Models[cite: 2, 7]
 Route::get('/manager/doacoes', [DonationController::class, 'index'])->name('manager.doacoes');
 
-Route::resource('manager/movements', MovementController::class);
+Route::resource(
+    'manager/movements',
+    MovementController::class
+);
 
 // --- VIEWS DO USER (DONATÁRIO) ---
 
@@ -70,9 +73,5 @@ Route::get('/user/buscar-lojas', function () {
 Route::get('/produtos', function () {
     return view('products.index');
 })->name('products.index');
-
-Route::get('/manager/movimentacoes', function () {
-    return view('manager.movimentacoes');
-})->name('manager.movimentacoes');
 
 require __DIR__ . '/auth.php';
