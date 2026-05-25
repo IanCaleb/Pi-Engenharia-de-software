@@ -84,7 +84,7 @@
                 <img src="{{asset('svgs/package.svg')}}"> <span>Produtos</span>
             </a>
 
-            <a href="/manager/movimentacoes"
+            <a href="/manager/movements"
                 class="flex items-center gap-3 px-4 py-3 rounded-lg transition
                {{ $active === 'movimentacoes'
                     ? 'bg-[#8B9C5C] font-medium'
