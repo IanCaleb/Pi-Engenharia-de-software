@@ -21,10 +21,10 @@ return new class extends Migration
             $table->dateTime('movement_date');
 
             $table->enum('movement_type', [
-                'purchase',
-                'sale',
-                'donation',
-                'expiration'
+                'Compra',
+                'Venda',
+                'Doação',
+                'Expiração'
             ]);
 
             $table->decimal('unit_price', 10, 2);
