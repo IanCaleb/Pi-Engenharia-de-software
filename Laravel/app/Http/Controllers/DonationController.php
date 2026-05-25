@@ -153,8 +153,7 @@ class DonationController extends Controller
 
       public function destroy(Donation $donation)
       {
-        $donation = Donation::findOrFail();
-
+        
         $donation->delete();
 
         return back()->with('success', 'Doação excluída com sucesso!');
