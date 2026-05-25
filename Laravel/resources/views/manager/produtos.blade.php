@@ -5,9 +5,7 @@
              WRAPPER PRINCIPAL — ocupa toda a área após
              a sidebar sem max-width nem margens automáticas
         ════════════════════════════════════════════════ --}}
-        <div
-            x-data="{ modalAberto: false }"
-            class="w-full bg-gray-50 px-4 py-6 sm:px-6 sm:py-8 lg:px-8 min-h-screen">
+        <div x-data="{ modalAberto: false, editandoId: null, nome: '', categoria: '', quantidade: 1, validade: '' }" class="w-full bg-gray-50 px-4 py-6 sm:px-6 sm:py-8 lg:px-8 min-h-screen">
 
             {{-- ── Cabeçalho da página ── --}}
             <header class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -104,8 +102,9 @@
                         }
                     @endphp
 
-                <li class="flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                    
 
+                <li class="flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
                 {{-- Topo do card (Com Alerta e Botão de Deletar) --}}
                 <div class="mb-4 flex items-start justify-between">
                     <div class="flex items-center gap-2">
@@ -118,7 +117,7 @@
                         <h2 class="font-bold text-gray-900">{{ $batch->product->name }}</h2>
                     </div>
 
-                    {{-- Grupo de ícones da direita (Alerta + Lixeira) --}}
+                    {{-- Grupo de ícones da direita (Alerta + Editar + Lixeira) --}}
                     <div class="flex items-center gap-2">
                         @if ($status !== 'safe')
                             {{-- Ícone de alerta --}}
@@ -127,6 +126,12 @@
                                 <path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                             </svg>
                         @endif
+
+                        <button type="button" @click="editandoId = {{ $batch->id }}; Object.assign($data, {nome: '{{ $batch->product->name }}', categoria: '{{ $batch->product->category }}', quantidade: {{ $batch->quantity }}, validade: '{{ $batch->expiration_date->format('Y-m-d') }}'})" class="text-gray-400 transition hover:text-blue-600" title="Editar Produto">
+                              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                 <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                             </svg>
+                         </button>
 
                         {{-- Mini-formulário de Delete --}}
                         <form 
@@ -284,13 +289,18 @@
                             <label for="categoria" class="mb-1 block text-sm font-medium text-gray-700">
                                 Categoria
                             </label>
-                            <input
-                                id="categoria"
-                                type="text"
-                                name="category" 
-                                placeholder="Ex: Laticínios"
-                                required
-                                class="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:border-[#749048] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#749048]">
+                            <select name="category" id="categoria" class="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:border-[#749048] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#749048]">
+                                <option value="">Selecione uma categoria</option>
+                                <option value="Laticínios">Laticínios</option>
+                                <option value="Limpeza">Limpeza</option>
+                                <option value="Congelados">Congelados</option>
+                                <option value="Enlatados">Enlatados</option>
+                                <option value="Cereais">Leguminosas e Cereais</option>
+                                <option value="Carnes">Carnes</option>
+                                <option value="Hortifruti">Hortifruti</option>
+                                <option value="Padaria">Padaria</option>
+                                <option value="Bebidas">Bebidas</option>
+                            </select>
                         </div>
 
                         {{-- Quantidade + Data de Validade na mesma linha --}}
@@ -318,10 +328,10 @@
                                     type="date"
                                     name="expiration_date" 
                                     required
-                                    class="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:border-[#749048] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#749048]">
+                                    class="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:border-[#749048] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#749048]"    min="{{ date('Y-m-d') }}" max="2036-12-31">
                             </div>
                         </div>
-
+                        
                         {{-- Botões de ação --}}
                         <footer class="flex justify-end gap-3 pt-2">
                             <button
@@ -341,6 +351,148 @@
                 </div>
             </div>
             {{-- /MODAL --}}
+
+            {{-- ═══════════════════════════════════════════
+                 MODAL — Editar Produto
+            ════════════════════════════════════════════════ --}}
+            <div
+                x-show="editandoId"
+                x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
+                x-transition:leave="transition ease-in duration-150"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 px-0 sm:px-4"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="modal-editar-titulo"
+                style="display: none;">
+                {{-- Painel do modal --}}
+                <div
+                    x-show="editandoId"
+                    x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="opacity-0 scale-95"
+                    x-transition:enter-end="opacity-100 scale-100"
+                    x-transition:leave="transition ease-in duration-150"
+                    x-transition:leave-start="opacity-100 scale-100"
+                    x-transition:leave-end="opacity-0 scale-95"
+                    @click.outside="editandoId = null"
+                    class="relative w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl bg-white p-5 sm:p-6 shadow-xl max-h-[90vh] overflow-y-auto">
+                    {{-- Botão fechar --}}
+                    <button
+                        @click="editandoId = null"
+                        class="absolute right-4 top-4 rounded-full p-1 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600"
+                        aria-label="Fechar modal">
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none">
+                            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                    </button>
+
+                    {{-- Cabeçalho do modal --}}
+                    <header class="mb-5">
+                        <h2 id="modal-editar-titulo" class="text-xl font-bold text-gray-900">
+                            Editar Produto
+                        </h2>
+                        <p class="mt-1 text-sm text-gray-500">
+                            Atualize o nome, categoria, quantidade ou validade do lote.
+                        </p>
+                    </header>
+
+                    {{-- Formulário de edição --}}
+                    <template x-if="editandoId">
+                        <form method="POST" :action="'/manager/produtos/' + editandoId" class="space-y-4">
+                            @csrf
+                            @method('PUT')
+
+                            {{-- Nome do Produto --}}
+                            <div>
+                                <label for="editar_nome" class="mb-1 block text-sm font-medium text-gray-700">
+                                    Nome do Produto
+                                </label>
+                                <input
+                                    id="editar_nome"
+                                    type="text"
+                                    name="name"
+                                    x-model="nome"
+                                    required
+                                    class="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:border-[#749048] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#749048]">
+                            </div>
+
+                            {{-- Categoria --}}
+                            <div>
+                                <label for="editar_categoria" class="mb-1 block text-sm font-medium text-gray-700">
+                                    Categoria
+                                </label>
+                                <select
+                                    id="editar_categoria"
+                                    name="category"
+                                    x-model="categoria"
+                                    required
+                                    class="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 focus:border-[#749048] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#749048]">
+                                    <option value="Laticínios">Laticínios</option>
+                                    <option value="limpeza">Limpeza</option>
+                                    <option value="congelados">Congelados</option>
+                                    <option value="entalados">Enlatados</option>
+                                    <option value="cereais">Leguminosas e Cereais</option>
+                                    <option value="Carnes">Carnes</option>
+                                    <option value="Hortifruti">Hortifruti</option>
+                                    <option value="Padaria">Padaria</option>
+                                    <option value="Bebidas">Bebidas</option>
+                                </select>
+                            </div>
+
+                            {{-- Quantidade + Data de Validade na mesma linha --}}
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label for="editar_quantidade" class="mb-1 block text-sm font-medium text-gray-700">
+                                        Quantidade
+                                    </label>
+                                    <input
+                                        id="editar_quantidade"
+                                        type="number"
+                                        name="quantity"
+                                        x-model.number="quantidade"
+                                        min="1"
+                                        required
+                                        class="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:border-[#749048] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#749048]">
+                                </div>
+
+                                <div>
+                                    <label for="editar_validade" class="mb-1 block text-sm font-medium text-gray-700">
+                                        Data de Validade
+                                    </label>
+                                    <input
+                                        id="editar_validade"
+                                        type="date"
+                                        name="expiration_date"
+                                        x-model="validade"
+                                        required
+                                        class="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:border-[#749048] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#749048]"
+                                        :min="new Date().toISOString().split('T')[0]">
+                                </div>
+                            </div>
+
+                            {{-- Botões de ação --}}
+                            <footer class="flex justify-end gap-3 pt-2">
+                                <button
+                                    type="button"
+                                    @click="editandoId = null"
+                                    class="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50">
+                                    Cancelar
+                                </button>
+                                <button
+                                    type="submit"
+                                    class="rounded-lg bg-[#08273B] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0a3350]">
+                                    Salvar alterações
+                                </button>
+                            </footer>
+                        </form>
+                    </template>
+
+                </div>
+            </div>
+            {{-- /MODAL EDITAR --}}
 
         </div>
 
