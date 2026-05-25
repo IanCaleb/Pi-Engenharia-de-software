@@ -7,6 +7,7 @@ use App\Http\Controllers\DonationController;
 use App\Http\Controllers\DonationRequestController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\MovementController;
 
 Route::get('/', function () {
     return view('landingPage.landingPage');
@@ -49,6 +50,11 @@ Route::post('/manager/produtos', [ProductController::class, 'store'])->name('man
 
 // Rota de Doações do Manager - Integrada com os Models[cite: 2, 7]
 Route::get('/manager/doacoes', [DonationController::class, 'index'])->name('manager.doacoes');
+
+Route::resource(
+    'manager/movements',
+    MovementController::class
+);
 
 // --- VIEWS DO USER (DONATÁRIO) ---
 

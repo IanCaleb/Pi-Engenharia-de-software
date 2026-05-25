@@ -65,7 +65,7 @@
                {{ $active === 'dashboard'
                     ? 'bg-[#8B9C5C] font-medium'
                     : 'hover:bg-[#8B9C5C]' }}">
-                📊 <span>Dashboard</span>
+                <img src="{{asset('svgs/dashboard.svg')}}"> <span>Dashboard</span>
             </a>
 
             <a href="/manager/doacoes"
@@ -73,7 +73,7 @@
                {{ $active === 'doacoes'
                     ? 'bg-[#8B9C5C] font-medium'
                     : 'hover:bg-[#8B9C5C]' }}">
-                🎁 <span>Doações</span>
+                <img src="{{asset('svgs/gift.svg')}}"> <span>Doações</span>
             </a>
 
             <a href="/manager/produtos"
@@ -81,7 +81,16 @@
                {{ $active === 'produtos'
                     ? 'bg-[#8B9C5C] font-medium'
                     : 'hover:bg-[#8B9C5C]' }}">
-                📦 <span>Produtos</span>
+                <img src="{{asset('svgs/package.svg')}}"> <span>Produtos</span>
+            </a>
+
+            <a href="/manager/movements"
+                class="flex items-center gap-3 px-4 py-3 rounded-lg transition
+               {{ $active === 'movimentacoes'
+                    ? 'bg-[#8B9C5C] font-medium'
+                    : 'hover:bg-[#8B9C5C]' }}">
+                <img src="{{asset('svgs/move.svg')}}"> <span>Movimentações</span>
+            </a>
             </a>
 
         </nav>
