@@ -43,7 +43,7 @@ class MovementController extends Controller
 
             'movement_date' => 'required|date',
 
-            'movement_type' => 'required|in:purchase,sale,donation,expiration',
+            'movement_type' => 'required|in:Compra,Venda,Doação,Expiração',
 
             'unit_price' => 'required|numeric|min:0',
 
@@ -54,7 +54,7 @@ class MovementController extends Controller
 
         return redirect()
             ->route('movements.index')
-            ->with('success', 'Movement created successfully.');
+            ->with('success', 'Movimento criado com sucesso.');
     }
 
     /**
@@ -88,7 +88,7 @@ class MovementController extends Controller
 
             'movement_date' => 'required|date',
 
-            'movement_type' => 'required|in:purchase,sale,donation,expiration',
+            'movement_type' => 'required|in:Compra,Venda,Doação,Expiração',
 
             'unit_price' => 'required|numeric|min:0',
 
@@ -99,7 +99,7 @@ class MovementController extends Controller
 
         return redirect()
             ->route('movements.index')
-            ->with('success', 'Movement updated successfully.');
+            ->with('success', 'Movimento editado com sucesso.');
     }
 
     /**
