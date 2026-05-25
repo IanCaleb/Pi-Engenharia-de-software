@@ -292,10 +292,10 @@
                             <select name="category" id="categoria" class="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:border-[#749048] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#749048]">
                                 <option value="">Selecione uma categoria</option>
                                 <option value="Laticínios">Laticínios</option>
-                                <option value="limpeza">Limpeza</option>
-                                <option value="congelados">Congelados</option>
-                                <option value="entalados">Enlatados</option>
-                                <option value="cereais">Leguminosas e Cereais</option>
+                                <option value="Limpeza">Limpeza</option>
+                                <option value="Congelados">Congelados</option>
+                                <option value="Enlatados">Enlatados</option>
+                                <option value="Cereais">Leguminosas e Cereais</option>
                                 <option value="Carnes">Carnes</option>
                                 <option value="Hortifruti">Hortifruti</option>
                                 <option value="Padaria">Padaria</option>

@@ -151,9 +151,9 @@ class DonationController extends Controller
         return redirect()->back()->with('success', 'Doação concluída! Estoque atualizado.');
     }
 
-      public function destroy($id)
+      public function destroy(Donation $donation)
       {
-        $donation = Donation::findOrFail($id);
+        $donation = Donation::findOrFail();
 
         $donation->delete();
 
