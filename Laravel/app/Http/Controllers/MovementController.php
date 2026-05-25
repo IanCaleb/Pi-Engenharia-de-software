@@ -111,6 +111,6 @@ class MovementController extends Controller
 
         return redirect()
             ->route('movements.index')
-            ->with('success', 'Movement deleted successfully.');
+            ->with('success', 'Movimento excluído com sucesso.');
     }
 }
