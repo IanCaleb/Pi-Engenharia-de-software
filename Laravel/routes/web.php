@@ -8,6 +8,7 @@ use App\Http\Controllers\DonationRequestController;
 use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\MovementController;
 
 Route::get('/', function () {
     return view('landingPage.landingPage');
@@ -37,7 +38,20 @@ Route::middleware('auth')->group(function () {
     Route::post('/donations', [DonationController::class, 'store'])->name('donations.store');
     Route::patch('/donations/requests/{donationRequest}/status', [DonationController::class, 'updateStatus'])->name('donations.updateStatus');
     Route::patch('/donations/requests/{donationRequest}/concluir', [DonationController::class, 'concluir'])->name('donations.concluir');
+// ── ROTAS DE DOAÇÃO (Lógica do Manager) ──
+Route::post('/donations', [DonationController::class, 'store'])
+    ->name('donations.store');
 
+Route::delete('/donations/{donation}', [DonationController::class, 'destroy'])
+    ->name('donations.destroy');
+
+Route::patch('/donations/requests/{donationRequest}/status',
+    [DonationController::class, 'updateStatus'])
+    ->name('donations.updateStatus');
+
+Route::patch('/donations/requests/{donationRequest}/concluir',
+    [DonationController::class, 'concluir'])
+    ->name('donations.concluir');
     // ── ROTAS DE SOLICITAÇÃO DE DOAÇÃO (Lógica do Donatário) ──
     Route::post('/donation-requests', [DonationRequestController::class, 'store'])->name('donation-requests.store');
 });
@@ -47,12 +61,17 @@ Route::middleware('auth')->group(function () {
 Route::get('/manager/dashboard', [ProductController::class, 'dashboard'])->name('manager.dashboard');
 Route::get('manager/produtos', [ProductController::class, 'index'])->name('manager.produtos');
 Route::post('/manager/produtos', [ProductController::class, 'store'])->name('manager.produtos.store');
-
+// Rota para processar a edição do produto/lote
+Route::put('/manager/produtos/{id}', [App\Http\Controllers\ProductController::class, 'update'])->name('manager.produtos.update');
 // Rota de Doações do Manager - Integrada com os Models[cite: 2, 7]
 Route::get('/manager/doacoes', [DonationController::class, 'index'])->name('manager.doacoes');
 
 // Notificações
 Route::get('/manager/notificacoes', [NotificationController::class, 'index'])->name('notifications.index');
+Route::resource(
+    'manager/movements',
+    MovementController::class
+);
 
 // --- VIEWS DO USER (DONATÁRIO) ---
 

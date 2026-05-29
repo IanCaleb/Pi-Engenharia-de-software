@@ -17,25 +17,29 @@
   <div x-show="open" @click.outside="open = false" x-transition
        class="absolute right-0 top-12 w-80 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden">
     <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-      <span class="text-sm font-semibold text-gray-800">🔔 Notificações</span>
+      <span class="text-sm font-semibold text-gray-800">Notificações</span>
       <button wire:click="markAllRead" class="text-xs text-green-700 font-medium hover:underline">
         Marcar todas como lidas
       </button>
     </div>
     <div class="max-h-72 overflow-y-auto divide-y divide-gray-50">
-      @forelse($notifications as $notif)
-        <div class="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer {{ $notif->read_at ? 'opacity-60' : '' }}">
-          <span class="mt-1.5 w-2.5 h-2.5 rounded-full flex-shrink-0 {{ $notif->type === 'expired' ? 'bg-red-500' : 'bg-amber-400' }}"></span>
+      @forelse($notifications as $lote)
+        <div class="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer">
+          
+          {{-- Bolinha de status (vermelho para vencido, amarelo para próximo) --}}
+          <span class="mt-1.5 w-2.5 h-2.5 rounded-full flex-shrink-0 {{ \Carbon\Carbon::parse($lote->expiration_date)->isPast() ? 'bg-red-500' : 'bg-amber-400' }}"></span>
+          
           <div class="flex-1 min-w-0">
-            <p class="text-sm font-semibold text-gray-800 truncate">{{ $notif->product_name }}</p>
-            <p class="text-xs text-gray-500">{{ $notif->message }}</p>
+            <p class="text-sm font-semibold text-gray-800 truncate">{{ $lote->product->name ?? 'Produto Indefinido' }}</p>
+            <p class="text-xs text-gray-500">Lote: {{ $lote->batch_number }} | Qtd: {{ $lote->quantity }}</p>
           </div>
+          
+          {{-- Tag de status --}}
           <span class="text-[10px] font-bold px-2 py-0.5 rounded-full flex-shrink-0
-            {{ $notif->type === 'expired'
-              ? 'bg-red-50 text-red-700'
-              : 'bg-amber-50 text-amber-700' }}">
-            {{ $notif->type === 'expired' ? 'Vencido' : 'Próximo' }}
+            {{ \Carbon\Carbon::parse($lote->expiration_date)->isPast() ? 'bg-red-50 text-red-700' : 'bg-amber-50 text-amber-700' }}">
+            {{ \Carbon\Carbon::parse($lote->expiration_date)->isPast() ? 'Vencido' : 'Próximo' }}
           </span>
+          
         </div>
       @empty
         <p class="text-sm text-gray-400 text-center py-6">Nenhuma notificação</p>

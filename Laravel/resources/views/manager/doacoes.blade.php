@@ -44,14 +44,22 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="flex flex-col gap-2 md:flex-row md:items-center">
-                            <span class="inline-flex w-fit items-center rounded-full bg-[#841a1a] px-3 py-1 text-xs font-semibold text-white whitespace-nowrap">
-                                {{ $donation->requests->where('status', 'pendente')->count() }} solicitações
-                            </span>
-                            <a href="#solicitacoes" class="rounded-lg bg-[#08273b] px-4 py-2 text-sm font-medium text-white text-center transition hover:bg-[#0a3350] whitespace-nowrap">
-                                Ver Solicitações
-                            </a>
-                        </div>
+                          <div class="flex flex-wrap items-center gap-2 shrink-0">
+                             <span class="inline-flex items-center rounded-full bg-[#841a1a] px-3 py-1 text-xs font-semibold text-white whitespace-nowrap">
+                                 {{ $donation->requests->where('status', 'pendente')->count() }} solicitações
+                             </span>
+                                <a href="#solicitacoes"
+                                   class="rounded-lg bg-[#08273b] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#0a3350] whitespace-nowrap"> 
+                                    Ver Solicitações
+                              </a>
+                              <form action="{{ route('donations.destroy', $donation->id) }}"method="POST"class="m-0"onsubmit="return confirm('Deseja realmente excluir esta doação?')">
+                                 @csrf
+                                 @method('DELETE')
+                                    <button type="submit"class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700 whitespace-nowrap">
+                                       Excluir
+                                   </button>
+                               </form>
+                         </div>
                     </div>
                     @empty
                     <p class="text-center text-sm text-gray-500 py-4">Nenhuma doação disponível no momento.</p>
