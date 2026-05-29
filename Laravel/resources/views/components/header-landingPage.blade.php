@@ -16,60 +16,55 @@
             <!-- Navegação Desktop -->
             <nav class="hidden lg:flex flex-1 justify-center">
                 <ul class="flex items-center gap-8 text-lg font-bold text-[#1E1E1E]">
+
                     <li>
                         <a href="#" class="hover:text-[#517517] transition">
                             Início
                         </a>
                     </li>
+
                     <li>
                         <a href="#" class="hover:text-[#517517] transition">
                             Como Funciona
                         </a>
                     </li>
+
                     <li>
                         <a href="#" class="hover:text-[#517517] transition">
                             Sobre
                         </a>
                     </li>
+
                 </ul>
             </nav>
 
             <!-- Ações Desktop -->
             <div class="hidden lg:flex items-center gap-3">
                 @if (Route::has('login'))
-                    @auth
-                        @if(auth()->user()->role === 'manager')
+                        @auth
                             <a
-                                href="{{ route('manager.dashboard') }}"
+                                href="{{ url('/dashboard') }}"
                                 class="bg-[#517517] text-white font-bold rounded-xl px-5 py-2.5 hover:bg-[#456614] transition"
                             >
                                 Dashboard
                             </a>
                         @else
                             <a
-                                href="{{ route('user.dashboard') }}"
-                                class="bg-[#517517] text-white font-bold rounded-xl px-5 py-2.5 hover:bg-[#456614] transition"
+                                href="{{ route('login') }}"
+                                class="rounded-xl font-bold border border-[#C1C1C1] px-5 py-2.5 hover:bg-gray-50 transition"
                             >
-                                Dashboard
+                                Entrar
                             </a>
-                        @endif
-                    @else
-                        <a
-                            href="{{ route('login') }}"
-                            class="rounded-xl font-bold border border-[#C1C1C1] px-5 py-2.5 hover:bg-gray-50 transition"
-                        >
-                            Entrar
-                        </a>
 
-                        @if (Route::has('register'))
-                            <a
-                                href="{{ route('register') }}"
-                                class="bg-[#517517] text-white font-bold rounded-xl px-5 py-2.5 hover:bg-[#456614] transition"
-                            >
-                                Cadastre sua conta
-                            </a>
-                        @endif
-                    @endauth
+                            @if (Route::has('register'))
+                                <a
+                                    href="{{ route('register') }}"
+                                    class="bg-[#517517] text-white font-bold rounded-xl px-5 py-2.5 hover:bg-[#456614] transition"
+                                >
+                                    Cadastre sua conta
+                                </a>
+                            @endif
+                        @endauth
                 @endif
             </div>
 
@@ -96,64 +91,56 @@
 
             <!-- Topo -->
             <div class="flex items-center justify-between mb-8">
+
                 <img
                     src="{{ asset('images/Logo.svg') }}"
                     alt="Logo"
                     class="w-32"
                 >
+
                 <button
                     onclick="document.getElementById('mobileMenu').classList.add('hidden')"
                     class="text-3xl leading-none"
                 >
                     ×
                 </button>
+
             </div>
 
             <!-- Links -->
             <nav class="flex flex-col gap-5 text-lg font-bold text-[#1E1E1E]">
+
                 <a href="#" class="hover:text-[#517517] transition">
                     Início
                 </a>
+
                 <a href="#" class="hover:text-[#517517] transition">
                     Como Funciona
                 </a>
+
                 <a href="#" class="hover:text-[#517517] transition">
                     Sobre
                 </a>
+
             </nav>
 
             <!-- Botões -->
             <div class="mt-auto flex flex-col gap-3 pt-8">
-                @auth
-                    @if(auth()->user()->role === 'manager')
-                        <a
-                            href="{{ route('manager.dashboard') }}"
-                            class="bg-[#517517] text-white font-bold rounded-xl px-5 py-3 text-center"
-                        >
-                            Dashboard
-                        </a>
-                    @else
-                        <a
-                            href="{{ route('user.dashboard') }}"
-                            class="bg-[#517517] text-white font-bold rounded-xl px-5 py-3 text-center"
-                        >
-                            Dashboard
-                        </a>
-                    @endif
-                @else
-                    <a
-                        href="{{ route('login') }}"
-                        class="rounded-xl font-bold border border-[#C1C1C1] px-5 py-3 text-center"
-                    >
-                        Entrar
-                    </a>
-                    <a
-                        href="{{ route('register') }}"
-                        class="bg-[#517517] text-white font-bold rounded-xl px-5 py-3 text-center"
-                    >
-                        Cadastre sua conta
-                    </a>
-                @endauth
+
+                <a
+                    href="#"
+                    class="rounded-xl font-bold border border-[#C1C1C1] px-5 py-3 text-center"
+                >
+                    Entrar
+                </a>
+
+                <a
+                    href="#"
+                    class="bg-[#517517] text-white font-bold rounded-xl px-5 py-3 text-center"
+                >
+                    Cadastre sua conta
+                </a>
+
             </div>
 
         </div>
