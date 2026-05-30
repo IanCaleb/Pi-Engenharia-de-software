@@ -58,7 +58,7 @@
                {{ $active === 'home'
                     ? 'bg-[#8B9C5C] font-medium'
                     : 'hover:bg-[#8B9C5C]' }}">
-                📊 <span>Home</span>
+                <img src="{{asset('svgs/dashboard.svg')}}"> <span>Home</span>
             </a>
 
             <a href="/user/buscar-lojas"
@@ -66,7 +66,7 @@
                {{ $active === 'buscar-lojas'
                     ? 'bg-[#8B9C5C] font-medium'
                     : 'hover:bg-[#8B9C5C]' }}">
-                🎁 <span>Buscar lojas</span>
+                <img src="{{asset('svgs/gift.svg')}}"> <span>Buscar lojas</span>
             </a>
 
             <a href="/user/doacoes"
@@ -74,7 +74,7 @@
                {{ $active === 'doacoes'
                     ? 'bg-[#8B9C5C] font-medium'
                     : 'hover:bg-[#8B9C5C]' }}">
-                📦 <span>Doações</span>
+                <img src="{{asset('svgs/package.svg')}}"> <span>Doações</span>
             </a>
 
         </nav>
