@@ -18,19 +18,19 @@
                 <ul class="flex items-center gap-8 text-lg font-bold text-[#1E1E1E]">
 
                     <li>
-                        <a href="#" class="hover:text-[#517517] transition">
+                        <a href="#inicio" class="hover:text-[#517517] transition">
                             Início
                         </a>
                     </li>
 
                     <li>
-                        <a href="#" class="hover:text-[#517517] transition">
+                        <a href="#como-funciona" class="hover:text-[#517517] transition">
                             Como Funciona
                         </a>
                     </li>
 
                     <li>
-                        <a href="#" class="hover:text-[#517517] transition">
+                        <a href="#sobre" class="hover:text-[#517517] transition">
                             Sobre
                         </a>
                     </li>
@@ -42,12 +42,28 @@
             <div class="hidden lg:flex items-center gap-3">
                 @if (Route::has('login'))
                         @auth
-                            <a
-                                href="{{ url('/dashboard') }}"
-                                class="bg-[#517517] text-white font-bold rounded-xl px-5 py-2.5 hover:bg-[#456614] transition"
-                            >
-                                Dashboard
-                            </a>
+                            @if (Auth::user()->role === 'manager')
+                                <a
+                                    href="{{ route('manager.dashboard') }}"
+                                    class="bg-[#517517] text-white font-bold rounded-xl px-5 py-2.5 hover:bg-[#456614] transition"
+                                >
+                                    Dashboard
+                                </a>
+                            @elseif (Auth::user()->role === 'user')
+                                <a
+                                    href="{{ route('user.dashboard') }}"
+                                    class="bg-[#517517] text-white font-bold rounded-xl px-5 py-2.5 hover:bg-[#456614] transition"
+                                >
+                                    Dashboard
+                                </a>
+                            @else
+                                <a
+                                    href="{{ url('/dashboard') }}"
+                                    class="bg-[#517517] text-white font-bold rounded-xl px-5 py-2.5 hover:bg-[#456614] transition"
+                                >
+                                    Dashboard
+                                </a>
+                            @endif
                         @else
                             <a
                                 href="{{ route('login') }}"
@@ -110,15 +126,15 @@
             <!-- Links -->
             <nav class="flex flex-col gap-5 text-lg font-bold text-[#1E1E1E]">
 
-                <a href="#" class="hover:text-[#517517] transition">
+                <a href="#inicio" onclick="document.getElementById('mobileMenu').classList.add('hidden')" class="hover:text-[#517517] transition">
                     Início
                 </a>
 
-                <a href="#" class="hover:text-[#517517] transition">
+                <a href="#como-funciona" onclick="document.getElementById('mobileMenu').classList.add('hidden')" class="hover:text-[#517517] transition">
                     Como Funciona
                 </a>
 
-                <a href="#" class="hover:text-[#517517] transition">
+                <a href="#sobre" onclick="document.getElementById('mobileMenu').classList.add('hidden')" class="hover:text-[#517517] transition">
                     Sobre
                 </a>
 
@@ -126,21 +142,48 @@
 
             <!-- Botões -->
             <div class="mt-auto flex flex-col gap-3 pt-8">
+                @if (Route::has('login'))
+                    @auth
+                        @if (Auth::user()->role === 'manager')
+                            <a
+                                href="{{ route('manager.dashboard') }}"
+                                class="bg-[#517517] text-white font-bold rounded-xl px-5 py-3 text-center hover:bg-[#456614] transition"
+                            >
+                                Dashboard
+                            </a>
+                        @elseif (Auth::user()->role === 'user')
+                            <a
+                                href="{{ route('user.dashboard') }}"
+                                class="bg-[#517517] text-white font-bold rounded-xl px-5 py-3 text-center hover:bg-[#456614] transition"
+                            >
+                                Dashboard
+                            </a>
+                        @else
+                            <a
+                                href="{{ url('/dashboard') }}"
+                                class="bg-[#517517] text-white font-bold rounded-xl px-5 py-3 text-center hover:bg-[#456614] transition"
+                            >
+                                Dashboard
+                            </a>
+                        @endif
+                    @else
+                        <a
+                            href="{{ route('login') }}"
+                            class="rounded-xl font-bold border border-[#C1C1C1] px-5 py-3 text-center hover:bg-gray-50 transition"
+                        >
+                            Entrar
+                        </a>
 
-                <a
-                    href="#"
-                    class="rounded-xl font-bold border border-[#C1C1C1] px-5 py-3 text-center"
-                >
-                    Entrar
-                </a>
-
-                <a
-                    href="#"
-                    class="bg-[#517517] text-white font-bold rounded-xl px-5 py-3 text-center"
-                >
-                    Cadastre sua conta
-                </a>
-
+                        @if (Route::has('register'))
+                            <a
+                                href="{{ route('register') }}"
+                                class="bg-[#517517] text-white font-bold rounded-xl px-5 py-3 text-center hover:bg-[#456614] transition"
+                            >
+                                Cadastre sua conta
+                            </a>
+                        @endif
+                    @endauth
+                @endif
             </div>
 
         </div>

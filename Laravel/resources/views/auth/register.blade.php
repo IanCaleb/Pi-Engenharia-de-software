@@ -21,8 +21,8 @@
             <x-input-label for="role" :value="__('Papel')" />
 
             <select name="role" id="role" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                <option value="user">Usuário</option>
-                <option value="manager">Gerente de loja</option>
+                <option value="user" {{ request('role') === 'user' ? 'selected' : '' }}>Usuário</option>
+                <option value="manager" {{ request('role') === 'manager' ? 'selected' : '' }}>Gerente de loja</option>
             </select>
 
             <x-input-error :messages="$errors->get('role')" class="mt-2" />
