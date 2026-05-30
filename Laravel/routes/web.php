@@ -5,7 +5,6 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\BatchController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\DonationRequestController;
-use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\MovementController;
@@ -66,8 +65,6 @@ Route::put('/manager/produtos/{id}', [App\Http\Controllers\ProductController::cl
 // Rota de Doações do Manager - Integrada com os Models[cite: 2, 7]
 Route::get('/manager/doacoes', [DonationController::class, 'index'])->name('manager.doacoes');
 
-// Notificações
-Route::get('/manager/notificacoes', [NotificationController::class, 'index'])->name('notifications.index');
 Route::resource(
     'manager/movements',
     MovementController::class
