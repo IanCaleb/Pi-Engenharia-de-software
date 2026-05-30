@@ -33,10 +33,5 @@ class AppServiceProvider extends ServiceProvider
                 $view->with('toasts', collect());
             }
         });
-
-        \Illuminate\Support\Facades\View::composer('components.notifications', function ($view) {
-            $view->with('notifications', collect());
-            $view->with('unreadCount', 0);
-        });
     }
 }
