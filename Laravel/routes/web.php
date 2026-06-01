@@ -73,16 +73,13 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 
 // --- VIEWS DO USER (DONATÁRIO) ---
 
-Route::get('/user/dashboard', function () {
-    return view('user.home');
-})->name('user.dashboard');
 
-Route::get('/user/home', function () {
-    return view('user.home');
-})->name('user.home');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/user/dashboard', [DonationController::class, 'userDashboard'])->name('user.dashboard');
+    Route::get('/user/home', [DonationController::class, 'userDashboard'])->name('user.home');
+});
 
 Route::get('/user/buscar-lojas', [SearchStoresController::class, 'index'])->name('user.buscar-lojas');
-
 Route::get('/user/doacoes', [UserDonationController::class, 'index'])->name('user.doacoes');
 
 Route::get('/produtos', function () {

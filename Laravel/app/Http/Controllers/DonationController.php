@@ -7,6 +7,7 @@ use App\Models\Donation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Movement;
+use App\Models\DonationRequest;
 
 class DonationController extends Controller
 {
@@ -56,9 +57,10 @@ class DonationController extends Controller
 
     public function index()
 {
-    // Pega todas as doações da loja logada
+    // Pega apenas as doações ativas (disponível ou em_processo) da loja logada
     $donations = \App\Models\Donation::with(['batch.product', 'requests'])
         ->where('store_id', Auth::id())
+        ->whereIn('status', ['disponivel', 'em_processo'])
         ->get();
 
     // Pega todas as solicitações recebidas para as doações deste gerente
@@ -177,4 +179,33 @@ class DonationController extends Controller
 
         return back()->with('success', 'Doação excluída com sucesso!');
         }
+    public function userDashboard()
+{
+    // 1. Pegar a doação que o usuário logado solicitou e foi ACEITA pelo mercado
+    // Adicionamos 'aceito' no filtro do whereIn
+    $doacaoAgendada = DonationRequest::with(['donation.store', 'donation.batch.product'])
+        ->where('donatario_id', Auth::id())
+        ->whereIn('status', ['pendente', 'aprovado', 'aceito']) // 
+        ->latest()
+        ->first();
+
+    if ($doacaoAgendada) {
+        $doacaoReal = $doacaoAgendada->donation;
+        $doacaoReal->id = $doacaoAgendada->id;
+        
+        // Garante que o status real (ex: 'aceito') passe para a View saber o que renderizar
+        $doacaoReal->status_solicitacao = $doacaoAgendada->status; 
+        
+        $doacaoAgendada = $doacaoReal;
+    }
+
+    // 2. Pegar todas as doações DISPONÍVEIS no sistema (para a lista de baixo)
+    $doacoesRecentes = Donation::with(['store', 'batch.product'])
+        ->where('status', 'disponivel')
+        ->latest()
+        ->take(5)
+        ->get();
+
+    return view('user.home', compact('doacaoAgendada', 'doacoesRecentes'));
+}
 }
