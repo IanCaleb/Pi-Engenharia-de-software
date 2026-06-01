@@ -5,9 +5,12 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\BatchController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\DonationRequestController;
+use App\Http\Controllers\SearchStoresController;
+use App\Http\Controllers\UserDonationController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\MovementController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
     return view('landingPage.landingPage');
@@ -16,10 +19,6 @@ Route::get('/', function () {
 Route::get('/landingPage', function () {
     return view('landingPage.landingPage');
 });
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
 // ROTAS PROTEGIDAS POR LOGIN
 Route::middleware('auth')->group(function () {
@@ -56,8 +55,6 @@ Route::patch('/donations/requests/{donationRequest}/concluir',
 });
 
 // --- VIEWS DO MANAGER ---
-
-Route::get('/manager/dashboard', [ProductController::class, 'dashboard'])->name('manager.dashboard');
 Route::get('manager/produtos', [ProductController::class, 'index'])->name('manager.produtos');
 Route::post('/manager/produtos', [ProductController::class, 'store'])->name('manager.produtos.store');
 // Rota para processar a edição do produto/lote
@@ -68,7 +65,11 @@ Route::get('/manager/doacoes', [DonationController::class, 'index'])->name('mana
 Route::resource(
     'manager/movements',
     MovementController::class
-);
+)->except(['edit', 'update']);
+
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 // --- VIEWS DO USER (DONATÁRIO) ---
 
@@ -80,9 +81,9 @@ Route::get('/user/home', function () {
     return view('user.home');
 })->name('user.home');
 
-Route::get('/user/buscar-lojas', function () {
-    return view('user.buscar-lojas');
-})->name('user.buscar-lojas');
+Route::get('/user/buscar-lojas', [SearchStoresController::class, 'index'])->name('user.buscar-lojas');
+
+Route::get('/user/doacoes', [UserDonationController::class, 'index'])->name('user.doacoes');
 
 Route::get('/produtos', function () {
     return view('products.index');

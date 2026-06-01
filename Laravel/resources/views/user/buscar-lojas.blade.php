@@ -1,28 +1,5 @@
 <x-app-layout>
     <x-sidebar-nav-user active="buscar-lojas">
-        @php
-        $lojasProximas = [
-            ['nome' => 'Açaí Atacadista', 'cidade' => 'Juazeiro do Norte', 'status' => 'Disponível', 'data' => '30/03/2026',
-             'remessa' => ['titulo' => 'Remessa de Frutas', 'data' => '30/03/2026', 'hora' => '09:00', 'endereco' => 'Av. Padre Cícero, 4.400 - São José, Juazeiro do Norte - CE, 63024-015']],
-            ['nome' => 'Atacadão', 'cidade' => 'Juazeiro do Norte', 'status' => 'Disponível', 'data' => '10/02/2026',
-             'remessa' => ['titulo' => 'Entrega de Hortaliças', 'data' => '02/04/2026', 'hora' => '14:30', 'endereco' => 'Rua São Pedro, 1.250 - Centro, Juazeiro do Norte - CE, 63010-010']],
-            ['nome' => 'Rcarvalho - Loja 01', 'cidade' => 'Juazeiro do Norte', 'status' => 'Disponível', 'data' => '20/01/2026',
-             'remessa' => ['titulo' => 'Transporte de Grãos', 'data' => '05/04/2026', 'hora' => '07:45', 'endereco' => 'Av. Leão Sampaio, 2.100 - Lagoa Seca, Juazeiro do Norte - CE, 63040-000']],
-            ['nome' => 'Supermercado Diniz - loja 01', 'cidade' => 'Juazeiro do Norte', 'status' => 'Disponível', 'data' => '05/01/2026',
-             'remessa' => ['titulo' => 'Coleta de Verduras', 'data' => '07/04/2026', 'hora' => '16:20', 'endereco' => 'Rua do Cruzeiro, 980 - Salesianos, Juazeiro do Norte - CE, 63050-250']],
-        ];
-
-        $ultimasLojas = [
-            ['nome' => 'Açaí Atacadista', 'cidade' => 'Juazeiro do Norte', 'status' => 'Disponível', 'data' => '05/03/2026',
-             'remessa' => ['titulo' => 'Distribuição de Legumes', 'data' => '10/04/2026', 'hora' => '11:10', 'endereco' => 'Av. Ailton Gomes, 3.300 - Pirajá, Juazeiro do Norte - CE, 63034-000']],
-            ['nome' => 'Atacadão', 'cidade' => 'Juazeiro do Norte', 'status' => 'Disponível', 'data' => '10/02/2026',
-             'remessa' => ['titulo' => 'Entrega de Hortaliças', 'data' => '02/04/2026', 'hora' => '14:30', 'endereco' => 'Rua São Pedro, 1.250 - Centro, Juazeiro do Norte - CE, 63010-010']],
-            ['nome' => 'Supermercado Diniz - loja 04', 'cidade' => 'Juazeiro do Norte', 'status' => 'Disponível', 'data' => '20/01/2026',
-             'remessa' => ['titulo' => 'Transporte de Grãos', 'data' => '05/04/2026', 'hora' => '07:45', 'endereco' => 'Av. Leão Sampaio, 2.100 - Lagoa Seca, Juazeiro do Norte - CE, 63040-000']],
-            ['nome' => 'Supermercado Diniz - loja 05', 'cidade' => 'Crato - CE', 'status' => 'Disponível', 'data' => '05/01/2026',
-             'remessa' => ['titulo' => 'Coleta de Verduras', 'data' => '07/04/2026', 'hora' => '16:20', 'endereco' => 'Rua do Cruzeiro, 980 - Salesianos, Juazeiro do Norte - CE, 63050-250']],
-        ];
-        @endphp
 
         {{-- Área principal de conteúdo da página --}}
         <main class="w-full bg-white px-8 py-8 min-h-screen">
@@ -123,8 +100,13 @@
             <section class="mb-8" aria-labelledby="titulo-proximas">
                 <h2 id="titulo-proximas" class="mb-4 text-lg font-semibold text-gray-800">Próximo de você:</h2>
 
+                @if ($lojasProximas->isEmpty())
+                    <div class="rounded-lg border border-gray-200 bg-gray-50 px-6 py-8 text-center">
+                        <p class="text-sm text-gray-600">Nenhuma doação disponível no momento.</p>
+                    </div>
+                @else
                 <ul class="space-y-3 list-none p-0">
-                    @foreach ($lojasProximas as $loja)
+                    @foreach ($lojasProximas as $doacao)
                     <li>
                         <article x-data="{ aberto: false }" class="rounded-xl border border-gray-200 bg-gray-50 px-5 py-4 shadow-sm">
 
@@ -134,61 +116,78 @@
                                         🎁
                                     </figure>
                                     <div class="min-w-0">
-                                        <h3 class="truncate font-semibold text-gray-800 text-base m-0">{{ $loja['nome'] }}</h3>
-                                        <p class="truncate text-xs text-gray-500 m-0">{{ $loja['cidade'] }} • {{ $loja['status'] }} • {{ $loja['data'] }}</p>
+                                        <h3 class="truncate font-semibold text-gray-800 text-base m-0">{{ $doacao->store->name }}</h3>
+                                        <p class="truncate text-xs text-gray-500 m-0">{{ $doacao->store->city }} • Disponível • {{ $doacao->created_at->format('d/m/Y') }}</p>
                                     </div>
                                 </div>
 
-                                <button
-                                    type="button"
+                               <button type="button"
                                     @click="aberto = !aberto"
                                     :aria-expanded="aberto.toString()"
-                                    x-text="aberto ? 'Solicitar doação' : 'Detalhes'"
-                                    class="shrink-0 whitespace-nowrap rounded-full bg-[#841A1A] px-5 py-2 text-sm font-medium text-white transition hover:bg-[#6b1515]">
-                                </button>
+                                    :class="aberto ? 'w-9 h-9 bg-transparent text-[#841A1A]' : 'px-5 py-2 rounded-full bg-[#841A1A] text-white'"
+                                    class="inline-flex items-center justify-center shrink-0 whitespace-nowrap text-sm font-medium transition-all duration-200 rounded-full hover:opacity-80 focus:outline-none">
+                                
+                                <!-- Quando estiver FECHADO (!aberto), mostra o texto "Detalhes" -->
+                                <span x-show="!aberto">
+                                    Detalhes
+                                </span>
+
+                                <!-- Quando estiver ABERTO (aberto), mostra apenas o ícone 'X' em vermelho -->
+                                <span x-show="aberto" x-cloak class="inline-flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                    </svg>
+                                </span>
+                            </button>
                             </header>
 
-                            @if (isset($loja['remessa']))
-                            <section x-show="aberto" x-transition class="ml-[52px] mt-4 space-y-1" aria-label="Detalhes da remessa">
-                                <header class="flex flex-wrap items-center gap-x-3 gap-y-1">
-                                    <h4 class="text-sm font-semibold text-gray-800 m-0">{{ $loja['remessa']['titulo'] }}</h4>
+                            <section x-show="aberto" x-transition class="ml-[52px] mt-4 space-y-3" aria-label="Detalhes da doação">
+                                <div>
+                                    <h4 class="text-sm font-semibold text-gray-800">{{ $doacao->batch->product->name }}</h4>
+                                    <p class="text-xs text-gray-600">Quantidade: {{ $doacao->quantity }} unidades</p>
+                                    <p class="text-xs text-gray-600">Vencimento: {{ $doacao->batch->expiration_date->format('d/m/Y') }}</p>
+                                </div>
 
-                                    <time
-                                        datetime="{{ $loja['remessa']['data'] }}"
-                                        class="flex items-center gap-1 text-xs font-normal text-gray-500">
-                                        <svg class="h-3.5 w-3.5 shrink-0 text-[#841A1A]" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                            <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.7" />
-                                            <path d="M8 2v4M16 2v4M3 10h18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
-                                        </svg>
-                                        {{ $loja['remessa']['data'] }}
-                                    </time>
+                                <!-- Endereço da loja -->
+                                @if ($doacao->store->rua && $doacao->store->numero && $doacao->store->bairro)
+                                    <div class="rounded-lg bg-blue-50 border border-blue-200 p-3">
+                                        <p class="text-xs font-semibold text-blue-900 mb-1">📍 Localização da Loja:</p>
+                                        <p class="text-xs text-blue-800">{{ $doacao->store->rua }}, {{ $doacao->store->numero }}</p>
+                                        <p class="text-xs text-blue-800">{{ $doacao->store->bairro }} - {{ $doacao->store->city }}</p>
+                                        @if ($doacao->store->cep)
+                                            <p class="text-xs text-blue-800">CEP: {{ $doacao->store->cep }}</p>
+                                        @endif
+                                    </div>
+                                @endif
 
-                                    <time
-                                        datetime="{{ $loja['remessa']['hora'] }}"
-                                        class="flex items-center gap-1 text-xs font-normal text-gray-500">
-                                        <svg class="h-3.5 w-3.5 shrink-0 text-[#841A1A]" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7" />
-                                            <path d="M12 7v5l3 3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
-                                        </svg>
-                                        {{ $loja['remessa']['hora'] }}
-                                    </time>
-                                </header>
-                                <address class="text-xs leading-relaxed text-gray-500 not-italic">{{ $loja['remessa']['endereco'] }}</address>
+                                <form action="{{ route('donation-requests.store') }}" method="POST" class="mt-3">
+                                    @csrf
+                                    <input type="hidden" name="donation_id" value="{{ $doacao->id }}">
+                                    <button type="submit"
+                                            class="w-full rounded-full bg-[#841A1A] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#6b1515]">
+                                            Solicitar esta doação
+                                    </button>
+                                </form>
                             </section>
-                            @endif
 
                         </article>
                     </li>
                     @endforeach
                 </ul>
+                @endif
             </section>
 
             {{-- ── Seção: Últimas Lojas ── --}}
             <section aria-labelledby="titulo-ultimas">
                 <h2 id="titulo-ultimas" class="mb-4 text-lg font-semibold text-gray-800">Últimas Lojas:</h2>
 
+                @if ($ultimasLojas->isEmpty())
+                    <div class="rounded-lg border border-gray-200 bg-gray-50 px-6 py-8 text-center">
+                        <p class="text-sm text-gray-600">Nenhuma doação disponível.</p>
+                    </div>
+                @else
                 <ul class="space-y-3 list-none p-0">
-                    @foreach ($ultimasLojas as $loja)
+                    @foreach ($ultimasLojas as $doacao)
                     <li>
                         <article x-data="{ aberto: false }" class="rounded-xl border border-gray-200 bg-gray-50 px-5 py-4 shadow-sm">
 
@@ -198,53 +197,65 @@
                                         🎁
                                     </figure>
                                     <div class="min-w-0">
-                                        <h3 class="truncate font-semibold text-gray-800 text-base m-0">{{ $loja['nome'] }}</h3>
-                                        <p class="truncate text-xs text-gray-500 m-0">{{ $loja['cidade'] }} • {{ $loja['status'] }} • {{ $loja['data'] }}</p>
+                                        <h3 class="truncate font-semibold text-gray-800 text-base m-0">{{ $doacao->store->name }}</h3>
+                                        <p class="truncate text-xs text-gray-500 m-0">{{ $doacao->store->city }} • Disponível • {{ $doacao->created_at->format('d/m/Y') }}</p>
                                     </div>
                                 </div>
 
-                                <button
-                                    type="button"
+                                <button type="button"
                                     @click="aberto = !aberto"
                                     :aria-expanded="aberto.toString()"
-                                    x-text="aberto ? 'Solicitar doação' : 'Detalhes'"
-                                    class="shrink-0 whitespace-nowrap rounded-full bg-[#841A1A] px-5 py-2 text-sm font-medium text-white transition hover:bg-[#6b1515]">
-                                </button>
+                                    :class="aberto ? 'w-9 h-9 bg-transparent text-[#841A1A]' : 'px-5 py-2 rounded-full bg-[#841A1A] text-white'"
+                                    class="inline-flex items-center justify-center shrink-0 whitespace-nowrap text-sm font-medium transition-all duration-200 rounded-full hover:opacity-80 focus:outline-none">
+                                
+                                <!-- Quando estiver FECHADO (!aberto), mostra o texto "Detalhes" -->
+                                <span x-show="!aberto">
+                                    Detalhes
+                                </span>
+
+                                <!-- Quando estiver ABERTO (aberto), mostra apenas o ícone 'X' em vermelho -->
+                                <span x-show="aberto" x-cloak class="inline-flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                    </svg>
+                                </span>
+                            </button>
                             </header>
 
-                            @if (isset($loja['remessa']))
-                            <section x-show="aberto" x-transition class="ml-[52px] mt-4 space-y-1" aria-label="Detalhes da remessa">
-                                <header class="flex flex-wrap items-center gap-x-3 gap-y-1">
-                                    <h4 class="text-sm font-semibold text-gray-800 m-0">{{ $loja['remessa']['titulo'] }}</h4>
+                            <section x-show="aberto" x-transition class="ml-[52px] mt-4 space-y-3" aria-label="Detalhes da doação">
+                                <div>
+                                    <h4 class="text-sm font-semibold text-gray-800">{{ $doacao->batch->product->name }}</h4>
+                                    <p class="text-xs text-gray-600">Quantidade: {{ $doacao->quantity }} unidades</p>
+                                    <p class="text-xs text-gray-600">Vencimento: {{ $doacao->batch->expiration_date->format('d/m/Y') }}</p>
+                                </div>
 
-                                    <time
-                                        datetime="{{ $loja['remessa']['data'] }}"
-                                        class="flex items-center gap-1 text-xs font-normal text-gray-500">
-                                        <svg class="h-3.5 w-3.5 shrink-0 text-[#841A1A]" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                            <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.7" />
-                                            <path d="M8 2v4M16 2v4M3 10h18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
-                                        </svg>
-                                        {{ $loja['remessa']['data'] }}
-                                    </time>
+                                <!-- Endereço da loja -->
+                                @if ($doacao->store->rua && $doacao->store->numero && $doacao->store->bairro)
+                                    <div class="rounded-lg bg-blue-50 border border-blue-200 p-3">
+                                        <p class="text-xs font-semibold text-blue-900 mb-1">📍 Localização da Loja:</p>
+                                        <p class="text-xs text-blue-800">{{ $doacao->store->rua }}, {{ $doacao->store->numero }}</p>
+                                        <p class="text-xs text-blue-800">{{ $doacao->store->bairro }} - {{ $doacao->store->city }}</p>
+                                        @if ($doacao->store->cep)
+                                            <p class="text-xs text-blue-800">CEP: {{ $doacao->store->cep }}</p>
+                                        @endif
+                                    </div>
+                                @endif
 
-                                    <time
-                                        datetime="{{ $loja['remessa']['hora'] }}"
-                                        class="flex items-center gap-1 text-xs font-normal text-gray-500">
-                                        <svg class="h-3.5 w-3.5 shrink-0 text-[#841A1A]" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7" />
-                                            <path d="M12 7v5l3 3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
-                                        </svg>
-                                        {{ $loja['remessa']['hora'] }}
-                                    </time>
-                                </header>
-                                <address class="text-xs leading-relaxed text-gray-500 not-italic">{{ $loja['remessa']['endereco'] }}</address>
+                                <form action="{{ route('donation-requests.store') }}" method="POST" class="mt-3">
+                                    @csrf
+                                    <input type="hidden" name="donation_id" value="{{ $doacao->id }}">
+                                    <button type="submit"
+                                            class="w-full rounded-full bg-[#841A1A] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#6b1515]">
+                                            Solicitar esta doação
+                                    </button>
+                                </form>
                             </section>
-                            @endif
 
                         </article>
                     </li>
                     @endforeach
                 </ul>
+                @endif
             </section>
 
         </main>

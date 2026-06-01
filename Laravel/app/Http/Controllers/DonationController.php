@@ -6,6 +6,7 @@ use App\Models\Batch;
 use App\Models\Donation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Movement;
 
 class DonationController extends Controller
 {
@@ -152,6 +153,15 @@ class DonationController extends Controller
 
         // 2. Finaliza a doação
         $donation->update(['status' => 'finalizada']);
+
+        Movement::create([
+            'product_id'      => $donation->batch->product_id,
+            'batch_id'        => $donation->batch_id,
+            'movement_type'   => 'Doação',
+            'moved_quantity'  => $donation->quantity,
+            'unit_price'      => 0,
+            'movement_date'   => now(),
+        ]);
 
         // 3. Subtrai a quantidade do lote físico
         $batch = $donation->batch;
