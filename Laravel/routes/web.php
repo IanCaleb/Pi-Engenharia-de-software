@@ -5,6 +5,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\BatchController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\DonationRequestController;
+use App\Http\Controllers\SearchStoresController;
+use App\Http\Controllers\UserDonationController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\MovementController;
@@ -79,9 +81,9 @@ Route::get('/user/home', function () {
     return view('user.home');
 })->name('user.home');
 
-Route::get('/user/buscar-lojas', function () {
-    return view('user.buscar-lojas');
-})->name('user.buscar-lojas');
+Route::get('/user/buscar-lojas', [SearchStoresController::class, 'index'])->name('user.buscar-lojas');
+
+Route::get('/user/doacoes', [UserDonationController::class, 'index'])->name('user.doacoes');
 
 Route::get('/produtos', function () {
     return view('products.index');

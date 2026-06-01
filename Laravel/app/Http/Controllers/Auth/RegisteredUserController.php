@@ -30,19 +30,41 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
+        $rules = [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'role' => ['required', 'string', 'max:255'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+        ];
 
-        $user = User::create([
+        // Adicionar validações para campos de endereço se for gerente
+        if ($request->role === 'manager') {
+            $rules['city'] = ['required', 'string', 'max:255'];
+            $rules['cep'] = ['required', 'string', 'max:9'];
+            $rules['rua'] = ['required', 'string', 'max:255'];
+            $rules['numero'] = ['required', 'string', 'max:10'];
+            $rules['bairro'] = ['required', 'string', 'max:255'];
+        }
+
+        $request->validate($rules);
+
+        $userData = [
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
             'password' => Hash::make($request->password),
-        ]);
+        ];
+
+        // Adicionar dados de endereço se for gerente
+        if ($request->role === 'manager') {
+            $userData['city'] = $request->city;
+            $userData['cep'] = $request->cep;
+            $userData['rua'] = $request->rua;
+            $userData['numero'] = $request->numero;
+            $userData['bairro'] = $request->bairro;
+        }
+
+        $user = User::create($userData);
 
         event(new Registered($user));
 
