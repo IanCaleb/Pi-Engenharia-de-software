@@ -5,7 +5,7 @@
              WRAPPER PRINCIPAL — ocupa toda a área após
              a sidebar sem max-width nem margens automáticas
         ════════════════════════════════════════════════ --}}
-        <div x-data="{ modalAberto: false, editandoId: null, nome: '', categoria: '', quantidade: 1, validade: '' }" class="w-full bg-gray-50 px-4 py-6 sm:px-6 sm:py-8 lg:px-8 min-h-screen">
+        <div x-data="{ modalAberto: false, editandoId: null, nome: '', categoria: '', validade: '' }" class="w-full bg-gray-50 px-4 py-6 sm:px-6 sm:py-8 lg:px-8 min-h-screen">
 
             {{-- ── Cabeçalho da página ── --}}
             <header class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -304,21 +304,7 @@
                         </div>
 
                         {{-- Quantidade + Data de Validade na mesma linha --}}
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label for="quantidade" class="mb-1 block text-sm font-medium text-gray-700">
-                                    Quantidade
-                                </label>
-                                <input
-                                    id="quantidade"
-                                    type="number"
-                                    name="quantity" 
-                                    min="0"
-                                    placeholder="0"
-                                    required
-                                    class="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:border-[#749048] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#749048]">
-                            </div>
-
+                        <div>
                             <div>
                                 <label for="data_validade" class="mb-1 block text-sm font-medium text-gray-700">
                                     Data de Validade
@@ -443,21 +429,6 @@
                             </div>
 
                             {{-- Quantidade + Data de Validade na mesma linha --}}
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label for="editar_quantidade" class="mb-1 block text-sm font-medium text-gray-700">
-                                        Quantidade
-                                    </label>
-                                    <input
-                                        id="editar_quantidade"
-                                        type="number"
-                                        name="quantity"
-                                        x-model.number="quantidade"
-                                        min="1"
-                                        required
-                                        class="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:border-[#749048] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#749048]">
-                                </div>
-
                                 <div>
                                     <label for="editar_validade" class="mb-1 block text-sm font-medium text-gray-700">
                                         Data de Validade

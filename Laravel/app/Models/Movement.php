@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use App\Models\Product;
+use App\Models\Batch;
 use Illuminate\Database\Eloquent\Model;
 
 class Movement extends Model
 {
     protected $fillable = [
         'product_id',
+        'batch_id',
         'movement_date',
         'movement_type',
         'unit_price',
@@ -19,4 +21,10 @@ class Movement extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    public function batch()
+    {
+        return $this->belongsTo(Batch::class);
+    }
+    
 }

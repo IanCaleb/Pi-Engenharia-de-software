@@ -60,7 +60,7 @@
         {{-- Navegação --}}
         <nav class="mt-4 px-3 space-y-2" aria-label="Menu do gerente">
 
-            <a href="/manager/dashboard"
+            <a href="{{ route('dashboard') }}"
                 class="flex items-center gap-3 px-4 py-3 rounded-lg transition
                {{ $active === 'dashboard'
                     ? 'bg-[#8B9C5C] font-medium'
