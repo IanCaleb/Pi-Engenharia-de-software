@@ -32,6 +32,10 @@ return new class extends Migration
             $table->integer('moved_quantity');
 
             $table->timestamps();
+
+            $table->foreignId('batch_id')
+                ->constrained('batches')
+                ->onDelete('cascade');
         });
     }
 

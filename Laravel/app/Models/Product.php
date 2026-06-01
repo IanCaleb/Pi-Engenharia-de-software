@@ -20,9 +20,9 @@ class Product extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function batches(): HasMany
+    public function batch()
     {
-        return $this->hasMany(Batch::class);
+        return $this->hasOne(Batch::class);
     }
 
     public function movements()
