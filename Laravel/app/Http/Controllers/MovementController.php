@@ -13,14 +13,17 @@ class MovementController extends Controller
      */
     public function index()
     {
-        $movements = Movement::with('product')->get();
+        $movements = Movement::with('product')
+            ->whereHas('product', function ($q) {
+                $q->where('user_id', auth()->id());
+            })
+            ->get();
 
-        $products = Product::with('batch')->get();
+        $products = Product::with('batch')
+            ->where('user_id', auth()->id())
+            ->get();
 
-        return view('movements.index', compact(
-            'movements',
-            'products'
-        ));
+        return view('movements.index', compact('movements', 'products'));
     }
 
     /**
@@ -46,9 +49,9 @@ class MovementController extends Controller
             'movement_date'   => 'required|date',
         ]);
 
-        $product = Product::with('batch')->findOrFail(
-            $validated['product_id']
-        );
+        $product = Product::with('batch')
+            ->where('user_id', auth()->id())
+            ->findOrFail($validated['product_id']);
 
         $batch = $product->batch;
 
@@ -86,7 +89,7 @@ class MovementController extends Controller
             $batch->quantity += $validated['moved_quantity'];
         }
 
-        $batch->save();
+        $batch->save(); 
 
         Movement::create($validated);
 
@@ -171,7 +174,6 @@ class MovementController extends Controller
             }
 
             $batch->quantity -= $movement->moved_quantity;
-
         } else {
 
             $batch->quantity += $movement->moved_quantity;

@@ -7,10 +7,11 @@ use App\Http\Controllers\DonationController;
 use App\Http\Controllers\DonationRequestController;
 use App\Http\Controllers\SearchStoresController;
 use App\Http\Controllers\UserDonationController;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\MovementController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MovimentacaoController;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return view('landingPage.landingPage');
@@ -22,7 +23,7 @@ Route::get('/landingPage', function () {
 
 // ROTAS PROTEGIDAS POR LOGIN
 Route::middleware('auth')->group(function () {
-    
+
     // Perfil do usuário
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -34,46 +35,39 @@ Route::middleware('auth')->group(function () {
 
     // ── ROTAS DE DOAÇÃO (Lógica do Manager) ──
     Route::post('/donations', [DonationController::class, 'store'])->name('donations.store');
+    Route::delete('/donations/{donation}', [DonationController::class, 'destroy'])->name('donations.destroy');
     Route::patch('/donations/requests/{donationRequest}/status', [DonationController::class, 'updateStatus'])->name('donations.updateStatus');
     Route::patch('/donations/requests/{donationRequest}/concluir', [DonationController::class, 'concluir'])->name('donations.concluir');
-// ── ROTAS DE DOAÇÃO (Lógica do Manager) ──
-Route::post('/donations', [DonationController::class, 'store'])
-    ->name('donations.store');
 
-Route::delete('/donations/{donation}', [DonationController::class, 'destroy'])
-    ->name('donations.destroy');
-
-Route::patch('/donations/requests/{donationRequest}/status',
-    [DonationController::class, 'updateStatus'])
-    ->name('donations.updateStatus');
-
-Route::patch('/donations/requests/{donationRequest}/concluir',
-    [DonationController::class, 'concluir'])
-    ->name('donations.concluir');
     // ── ROTAS DE SOLICITAÇÃO DE DOAÇÃO (Lógica do Donatário) ──
     Route::post('/donation-requests', [DonationRequestController::class, 'store'])->name('donation-requests.store');
+
+    // ── ROTAS DE MOVIMENTAÇÕES ──
+    Route::get('/movimentacoes', [MovimentacaoController::class, 'index'])->name('movimentacoes.index');
+    Route::post('/movimentacoes', [MovimentacaoController::class, 'store'])->name('movimentacoes.store');
+    Route::get('/movimentacoes/{id}', [MovimentacaoController::class, 'show'])->name('movimentacoes.show');
+    Route::patch('/movimentacoes/{id}', [MovimentacaoController::class, 'update'])->name('movimentacoes.update');
+    Route::delete('/movimentacoes/{id}', [MovimentacaoController::class, 'destroy'])->name('movimentacoes.destroy');
 });
 
 // --- VIEWS DO MANAGER ---
-Route::get('manager/produtos', [ProductController::class, 'index'])->name('manager.produtos');
-Route::post('/manager/produtos', [ProductController::class, 'store'])->name('manager.produtos.store');
-// Rota para processar a edição do produto/lote
-Route::put('/manager/produtos/{id}', [App\Http\Controllers\ProductController::class, 'update'])->name('manager.produtos.update');
-// Rota de Doações do Manager - Integrada com os Models[cite: 2, 7]
-Route::get('/manager/doacoes', [DonationController::class, 'index'])->name('manager.doacoes');
-
-Route::resource(
-    'manager/movements',
-    MovementController::class
-)->except(['edit', 'update']);
-
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
+// Alias para manter compatibilidade
+Route::get('/manager/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth'])
+    ->name('manager.dashboard');
+
+Route::get('manager/produtos', [ProductController::class, 'index'])->name('manager.produtos');
+Route::post('/manager/produtos', [ProductController::class, 'store'])->name('manager.produtos.store');
+Route::put('/manager/produtos/{id}', [ProductController::class, 'update'])->name('manager.produtos.update');
+Route::get('/manager/doacoes', [DonationController::class, 'index'])->name('manager.doacoes');
+
+Route::resource('manager/movements', MovementController::class)->except(['edit', 'update']);
+
 // --- VIEWS DO USER (DONATÁRIO) ---
-
-
 Route::middleware(['auth'])->group(function () {
     Route::get('/user/dashboard', [DonationController::class, 'userDashboard'])->name('user.dashboard');
     Route::get('/user/home', [DonationController::class, 'userDashboard'])->name('user.home');
