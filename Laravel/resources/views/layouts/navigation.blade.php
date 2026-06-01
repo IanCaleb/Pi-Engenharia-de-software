@@ -17,7 +17,17 @@
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6 gap-4">
-                
+                @if(request()->routeIs('profile.edit'))
+                    @php
+                        $dashboardRoute = auth()->check() && auth()->user()->role === 'manager' ? 'manager.dashboard' : 'user.dashboard';
+                    @endphp
+                    <a href="{{ route($dashboardRoute) }}" title="Voltar ao dashboard" class="inline-flex items-center justify-center w-11 h-11 bg-[#789744] hover:bg-[#6E7A2F] text-white rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path d="M10.707 1.707a1 1 0 00-1.414 0L2.293 8.707a1 1 0 001.414 1.414L4 9.828V16a1 1 0 001 1h3a1 1 0 001-1v-3h2v3a1 1 0 001 1h3a1 1 0 001-1V9.828l.293.293a1 1 0 001.414-1.414L10.707 1.707z"/>
+                        </svg>
+                    </a>
+                @endif
+
                 <x-notifications />
                
 
