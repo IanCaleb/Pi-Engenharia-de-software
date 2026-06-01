@@ -67,6 +67,9 @@
         <div class="mt-4">
             <x-input-label for="role" :value="__('Papel')" />
 
+            <select name="role" id="role" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                <option value="user" {{ request('role') === 'user' ? 'selected' : '' }}>Usuário</option>
+                <option value="manager" {{ request('role') === 'manager' ? 'selected' : '' }}>Gerente de loja</option>
             <select name="role" id="role" x-model="role" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                 <option value="user">Usuário</option>
                 <option value="manager">Gerente de loja</option>

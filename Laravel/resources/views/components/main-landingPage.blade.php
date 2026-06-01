@@ -19,13 +19,37 @@
         </p>
 
         <div class="flex flex-col sm:flex-row gap-4 w-full max-w-xl">
-            <button class="rounded-lg font-bold border border-[#C1C1C1] py-3 px-6 flex-1">
-                Quero doar alimentos
-            </button>
+            @auth
+                @if (Auth::user()->role === 'manager')
+                    <a href="{{ route('manager.dashboard') }}" class="rounded-lg font-bold border border-[#C1C1C1] py-3 px-6 flex-1 text-center hover:bg-gray-50 transition flex items-center justify-center">
+                        Quero doar alimentos
+                    </a>
+                @else
+                    <a href="{{ route('user.dashboard') }}" class="rounded-lg font-bold border border-[#C1C1C1] py-3 px-6 flex-1 text-center hover:bg-gray-50 transition flex items-center justify-center">
+                        Quero doar alimentos
+                    </a>
+                @endif
+            @else
+                <a href="{{ route('register', ['role' => 'manager']) }}" class="rounded-lg font-bold border border-[#C1C1C1] py-3 px-6 flex-1 text-center hover:bg-gray-50 transition flex items-center justify-center">
+                    Quero doar alimentos
+                </a>
+            @endauth
 
-            <button class="rounded-lg font-bold bg-[#517517] text-white py-3 px-6 flex-1">
-                Quero receber doação
-            </button>
+            @auth
+                @if (Auth::user()->role === 'user')
+                    <a href="{{ route('user.dashboard') }}" class="rounded-lg font-bold bg-[#517517] text-white py-3 px-6 flex-1 text-center hover:bg-[#456614] transition flex items-center justify-center">
+                        Quero receber doação
+                    </a>
+                @else
+                    <a href="{{ route('manager.dashboard') }}" class="rounded-lg font-bold bg-[#517517] text-white py-3 px-6 flex-1 text-center hover:bg-[#456614] transition flex items-center justify-center">
+                        Quero receber doação
+                    </a>
+                @endif
+            @else
+                <a href="{{ route('register', ['role' => 'user']) }}" class="rounded-lg font-bold bg-[#517517] text-white py-3 px-6 flex-1 text-center hover:bg-[#456614] transition flex items-center justify-center">
+                    Quero receber doação
+                </a>
+            @endauth
         </div>
 
     </div>
@@ -41,7 +65,7 @@
 
 </div>
 
-<section class="w-full bg-[#F8F8F8] px-4 py-16 md:px-12 lg:px-24">
+<section id="como-funciona" class="w-full bg-[#F8F8F8] px-4 py-16 md:px-12 lg:px-24">
 
     <!-- Cabeçalho -->
     <div class="max-w-4xl mx-auto text-center mb-14">
@@ -169,7 +193,7 @@
 
 </section>
 
-<section class="w-full bg-[#022436] px-4 py-16 md:px-12 lg:px-24">
+<section id="sobre" class="w-full bg-[#022436] px-4 py-16 md:px-12 lg:px-24">
 
     <div class="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
 
@@ -220,7 +244,7 @@
 
 </section>
 
-<section class="w-full bg-[#F8F8F8] px-4 py-16 md:px-12 lg:px-24">
+<section id="para-quem-e" class="w-full bg-[#F8F8F8] px-4 py-16 md:px-12 lg:px-24">
 
     <!-- Cabeçalho -->
     <div class="max-w-4xl mx-auto text-center mb-14">
@@ -268,9 +292,15 @@
                 <li>• Certificado de empresa parceira</li>
             </ul>
 
-            <button class="mt-8 bg-[#5D7F1E] hover:bg-[#4E6B19] transition text-white font-bold rounded-xl py-4 px-6 w-full">
-                Cadastrar a minha empresa
-            </button>
+            @auth
+                <a href="{{ Auth::user()->role === 'manager' ? route('manager.dashboard') : route('user.dashboard') }}" class="block mt-8 bg-[#5D7F1E] hover:bg-[#4E6B19] transition text-white font-bold rounded-xl py-4 px-6 w-full text-center">
+                    Acessar painel da empresa
+                </a>
+            @else
+                <a href="{{ route('register', ['role' => 'manager']) }}" class="block mt-8 bg-[#5D7F1E] hover:bg-[#4E6B19] transition text-white font-bold rounded-xl py-4 px-6 w-full text-center">
+                    Cadastrar a minha empresa
+                </a>
+            @endauth
 
         </div>
 
@@ -299,9 +329,15 @@
                 <li>• Notificações de novos produtos</li>
             </ul>
 
-            <button class="mt-8 bg-[#0A3B5C] hover:bg-[#082F49] transition text-white font-bold rounded-xl py-4 px-6 w-full">
-                Cadastrar como donatário
-            </button>
+            @auth
+                <a href="{{ Auth::user()->role === 'user' ? route('user.dashboard') : route('manager.dashboard') }}" class="block mt-8 bg-[#0A3B5C] hover:bg-[#082F49] transition text-white font-bold rounded-xl py-4 px-6 w-full text-center">
+                    Acessar painel do donatário
+                </a>
+            @else
+                <a href="{{ route('register', ['role' => 'user']) }}" class="block mt-8 bg-[#0A3B5C] hover:bg-[#082F49] transition text-white font-bold rounded-xl py-4 px-6 w-full text-center">
+                    Cadastrar como donatário
+                </a>
+            @endauth
 
         </div>
 
@@ -309,7 +345,7 @@
 
 </section>
 
-<footer class="w-full bg-gradient-to-br from-[#5D7F1E] to-[#466114] px-4 py-20 md:px-12 lg:px-24 overflow-hidden">
+<footer id="contato" class="w-full bg-gradient-to-br from-[#5D7F1E] to-[#466114] px-4 py-20 md:px-12 lg:px-24 overflow-hidden">
 
     <div class="max-w-7xl mx-auto">
 
@@ -332,13 +368,19 @@
 
             <div class="flex flex-col sm:flex-row justify-center gap-4">
 
-                <button class="bg-white text-[#5D7F1E] font-bold rounded-2xl px-8 py-4 text-lg hover:scale-105 transition shadow-lg">
-                    Criar conta →
-                </button>
+                @auth
+                    <a href="{{ Auth::user()->role === 'manager' ? route('manager.dashboard') : route('user.dashboard') }}" class="bg-white text-[#5D7F1E] font-bold rounded-2xl px-8 py-4 text-lg hover:scale-105 transition shadow-lg text-center flex items-center justify-center">
+                        Acessar plataforma →
+                    </a>
+                @else
+                    <a href="{{ route('register') }}" class="bg-white text-[#5D7F1E] font-bold rounded-2xl px-8 py-4 text-lg hover:scale-105 transition shadow-lg text-center flex items-center justify-center">
+                        Criar conta →
+                    </a>
 
-                <button class="border border-white/40 text-white font-bold rounded-2xl px-8 py-4 text-lg hover:bg-white/10 transition">
-                    Acessar plataforma
-                </button>
+                    <a href="{{ route('login') }}" class="border border-white/40 text-white font-bold rounded-2xl px-8 py-4 text-lg hover:bg-white/10 transition text-center flex items-center justify-center">
+                        Acessar plataforma
+                    </a>
+                @endauth
 
             </div>
 
@@ -369,10 +411,10 @@
                 </h4>
 
                 <ul class="space-y-3 text-white/80 text-lg">
-                    <li><a href="#" class="hover:text-white transition">Como funciona</a></li>
-                    <li><a href="#" class="hover:text-white transition">Para empresas</a></li>
-                    <li><a href="#" class="hover:text-white transition">Para donatários</a></li>
-                    <li><a href="#" class="hover:text-white transition">Contato</a></li>
+                    <li><a href="#como-funciona" class="hover:text-white transition">Como funciona</a></li>
+                    <li><a href="#para-quem-e" class="hover:text-white transition">Para empresas</a></li>
+                    <li><a href="#para-quem-e" class="hover:text-white transition">Para donatários</a></li>
+                    <li><a href="#contato" class="hover:text-white transition">Contato</a></li>
                 </ul>
             </div>
 
