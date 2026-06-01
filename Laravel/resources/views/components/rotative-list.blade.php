@@ -5,7 +5,7 @@
         {{ $type === 'bottom' ? 'Menor rotatividade' : 'Maior rotatividade' }}
     </h3>
 
-    @foreach ($items as $index => $item)
+    @forelse ($items as $index => $item)
         <div class="flex justify-between items-center border border-[#dbdbdb] p-2.5 rounded-lg mb-2">
             <div class="flex gap-2.5">
                 <strong>{{ $index + 1 }}</strong>
@@ -18,6 +18,11 @@
                 {{ $item['tempo'] }}
             </span>
         </div>
-    @endforeach
+    @empty
+        <div class="flex items-center justify-center py-8">
+            <span class="text-gray-500 font-medium">
+                Sem dados
+            </span>
+        </div>
+    @endforelse
 </div>
-
