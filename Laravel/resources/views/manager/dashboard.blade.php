@@ -348,7 +348,6 @@ $slowRotatividade = array_map(function ($item) {
 
 @endphp
 
-
 <x-app-layout>
     <x-sidebar-nav-manager active="dashboard">
         <div class="py-12">
@@ -381,32 +380,7 @@ $slowRotatividade = array_map(function ($item) {
                         </x-slot>
                     </x-fillters-dashboard>
 
-                    <x-stats-cards :cards="[
-                        [
-                            'title' => 'Produtos Monitorados',
-                            'value' => '1,067',
-                            'change' => '+12%',
-                            'description' => 'este mês'
-                        ],
-                        [
-                            'title' => 'Próximos do vencimento',
-                            'value' => '87',
-                            'change' => '',
-                            'description' => 'Próximos 7 dias'
-                        ],
-                        [
-                            'title' => 'Doações realizadas',
-                            'value' => '15 Doações',
-                            'change' => '+21%',
-                            'description' => 'este mês'
-                        ],
-                        [
-                            'title' => 'Prejuizo por vencimentos',
-                            'value' => 'R$ 345.00',
-                            'change' => '+6%',
-                            'description' => 'este mês'
-                        ]
-                    ]" />
+                    <x-stats-cards :cards="$cards" />
 
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
     
