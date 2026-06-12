@@ -10,25 +10,7 @@
                         <p class="text-lg text-gray-600">Visão geral do controle de validade e doações</p>
                     </div>
 
-                    <x-fillters-dashboard>
-                        <x-slot name="filters">
-                            
-                            <!-- Select: Últimos 30 dias -->
-                            <select class="bg-white border border-gray-300 rounded-full px-8 py-2 text-sm">
-                                <option>Últimos 30 dias</option>
-                                <option>Últimos 7 dias</option>
-                                <option>Hoje</option>
-                            </select>
-
-                            <!-- Select: Categorias -->
-                            <select class="bg-white border border-gray-300 rounded-full px-8 py-2 text-sm">
-                                <option>Categorias</option>
-                                <option>Alimentos</option>
-                                <option>Bebidas</option>
-                            </select>
-
-                        </x-slot>
-                    </x-fillters-dashboard>
+                    
                     
                     <x-stats-cards :cards="$cards" />
 
@@ -57,7 +39,7 @@
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
                         <x-category-pie-chart
                             chartId="graficoCategorias"
-                            title="Distribuição por Categoria"
+                            title="Perdas por Categoria"
                             :labels="$catLabels"
                             :data="$catData"
                         />
@@ -77,25 +59,13 @@
 
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                            <x-excessive-list :items="[
-                                ['nome' => 'Leite integral', 'perda' => '30%'],
-                                ['nome' => 'Arroz', 'perda' => '30%'],
-                                ['nome' => 'Macarrão', 'perda' => '30%'],
-                                ['nome' => 'Leite integral', 'perda' => '30%'],
-                                ['nome' => 'Arroz', 'perda' => '30%'],
-                                ['nome' => 'Macarrão', 'perda' => '30%']
-                            ]" 
-                            type="bottom"
+                            <x-excessive-list
+                                :items="$worstProducts"
+                                type="bottom"
                             />
-                            <x-excessive-list :items="[
-                                ['nome' => 'Leite integral', 'perda' => '10%'],
-                                ['nome' => 'Arroz', 'perda' => '10%'],
-                                ['nome' => 'Macarrão', 'perda' => '10%'],
-                                ['nome' => 'Leite integral', 'perda' => '10%'],
-                                ['nome' => 'Arroz', 'perda' => '10%'],
-                                ['nome' => 'Macarrão', 'perda' => '10%']
-                            ]" 
-                            type="top"
+                            <x-excessive-list
+                                :items="$bestProducts"
+                                type="top"
                             />
                         </div>
 
