@@ -530,6 +530,107 @@ class DashboardController extends Controller
             })
             ->toArray();
 
+        // =========================
+        // PRODUTOS COM MAIOR/MENOR PERDA
+        // =========================
+
+        $movements = Movement::with('product')
+            ->whereHas('product', function ($query) {
+                $query->where('user_id', auth()->id());
+            })
+            ->get();
+
+        $performance = [];
+
+        foreach ($movements as $movement) {
+
+            if (!$movement->product) {
+                continue;
+            }
+
+            $nome = trim($movement->product->name);
+
+            if (!isset($performance[$nome])) {
+                $performance[$nome] = [
+                    'compras' => 0,
+                    'perdas' => 0,
+                ];
+            }
+
+            if ($movement->movement_type === 'Compra') {
+                $performance[$nome]['compras']
+                    += $movement->moved_quantity;
+            }
+
+            if (
+                in_array(
+                    $movement->movement_type,
+                    ['Doação', 'Expiração']
+                )
+            ) {
+                $performance[$nome]['perdas']
+                    += $movement->moved_quantity;
+            }
+        }
+
+        $lossRanking = [];
+
+        foreach ($performance as $nome => $dados) {
+
+            if ($dados['compras'] <= 0) {
+                continue;
+            }
+
+            $percentual =
+                ($dados['perdas'] / $dados['compras']) * 100;
+
+            $lossRanking[] = [
+                'nome' => $nome,
+                'perda' => round($percentual, 1) . '%',
+                'valor' => $percentual,
+            ];
+        }
+
+        $worstProducts = $lossRanking;
+
+        usort(
+            $worstProducts,
+            fn ($a, $b) => $b['valor'] <=> $a['valor']
+        );
+
+        $worstProducts = array_slice(
+            $worstProducts,
+            0,
+            6
+        );
+
+        $worstProducts = array_map(function ($item) {
+            return [
+                'nome' => $item['nome'],
+                'perda' => $item['perda'],
+            ];
+        }, $worstProducts);
+
+        $bestProducts = $lossRanking;
+
+        usort(
+            $bestProducts,
+            fn ($a, $b) => $a['valor'] <=> $b['valor']
+        );
+
+        $bestProducts = array_slice(
+            $bestProducts,
+            0,
+            6
+        );
+
+        $bestProducts = array_map(function ($item) {
+            return [
+                'nome' => $item['nome'],
+                'perda' => $item['perda'],
+            ];
+        }, $bestProducts);
+
         return view(
             'manager.dashboard',
             compact(
@@ -545,6 +646,8 @@ class DashboardController extends Controller
                 'topRotatividade',
                 'slowRotatividade',
                 'nextLosses',
+                'worstProducts',
+                'bestProducts',
             )
         );
     }
